@@ -7,6 +7,8 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import Loyalty from "./pages/Loyalty";
+import { FirstTimeModal } from "./components/FirstTimeModal";
 
 
 function Router() {
@@ -15,6 +17,7 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/shop"} component={Shop} />
       <Route path={"/product/:id"} component={ProductDetail} />
+      <Route path={"/loyalty"} component={Loyalty} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />
@@ -36,6 +39,7 @@ function App() {
       >
         <TooltipProvider>
           <Toaster />
+          <FirstTimeModal />
           <Router />
         </TooltipProvider>
       </ThemeProvider>
