@@ -3,54 +3,10 @@ import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
 import { ArrowRight, Truck, ShieldCheck, Clock, MapPin } from "lucide-react";
 import { Link } from "wouter";
+import { products } from "@/lib/products";
 
-// Mock Data
-const featuredProducts = [
-  {
-    id: "1",
-    name: "Blue Dream Reserve",
-    brand: "Aurum Farms",
-    category: "Flower",
-    thc: "28.5%",
-    price: 45,
-    image: "/images/flower-category.jpg",
-    rating: 4.8,
-    tags: ["Sativa Dominant", "Top Shelf"]
-  },
-  {
-    id: "2",
-    name: "Midnight Berry Pen",
-    brand: "Luxe Vapes",
-    category: "Vape",
-    thc: "85.0%",
-    price: 35,
-    image: "/images/vape-category.jpg",
-    rating: 4.9,
-    tags: ["Indica", "Solventless"]
-  },
-  {
-    id: "3",
-    name: "Gold Leaf Truffles",
-    brand: "Gourmet Edibles",
-    category: "Edibles",
-    thc: "100mg",
-    price: 25,
-    image: "/images/edible-category.jpg",
-    rating: 5.0,
-    tags: ["Hybrid", "Gluten Free"]
-  },
-  {
-    id: "4",
-    name: "Platinum OG",
-    brand: "Valley Grown",
-    category: "Flower",
-    thc: "31.2%",
-    price: 55,
-    image: "/images/flower-category.jpg",
-    rating: 4.7,
-    tags: ["Indica", "Exclusive"]
-  }
-];
+// Select top 4 products for featured section
+const featuredProducts = products.slice(0, 4);
 
 const categories = [
   { name: "Flower", image: "/images/flower-category.jpg", desc: "Premium indoor grown buds" },
