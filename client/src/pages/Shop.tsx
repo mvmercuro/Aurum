@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
-import { products } from "@/lib/products";
+import { productsApi, Product, Category } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, SlidersHorizontal } from "lucide-react";
+import { Search, SlidersHorizontal, Loader2 } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -15,27 +15,59 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 
 export default function Shop() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<number[]>([]);
 
-  const categories = ["Flower", "Pre-rolls", "Vape", "Edibles", "Concentrates"];
-  const brands = ["Aurum Farms", "Pacific Stone", "Connected", "Heavy Hitters", "Valley Grown"];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [productsData, categoriesData] = await Promise.all([
+          productsApi.getAll(),
+          productsApi.getCategories(),
+        ]);
+        setProducts(productsData);
+        setCategories(categoriesData);
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const toggleCategory = (category: string) => {
-    setSelectedCategories(prev => 
-      prev.includes(category) 
-        ? prev.filter(c => c !== category)
-        : [...prev, category]
+  const toggleCategory = (categoryId: number) => {
+    setSelectedCategories((prev) =>
+      prev.includes(categoryId)
+        ? prev.filter((c) => c !== categoryId)
+        : [...prev, categoryId]
     );
   };
 
-  const filteredProducts = products.filter(product => {
-    const matchesSearch = product.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          product.brand.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategories.length === 0 || selectedCategories.includes(product.category);
-    
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch =
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (product.brand?.toLowerCase() || "").includes(searchQuery.toLowerCase());
+    const matchesCategory =
+      selectedCategories.length === 0 ||
+      selectedCategories.includes(product.categoryId);
+
     return matchesSearch && matchesCategory;
   });
+
+  if (loading) {
+    return (
+      <Layout>
+        <div className="container py-20 flex items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -46,8 +78,8 @@ export default function Shop() {
           <div className="flex gap-2 w-full md:w-auto">
             <div className="relative flex-1 md:w-80">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input 
-                placeholder="Search strains, brands..." 
+              <Input
+                placeholder="Search strains, brands..."
                 className="pl-9 bg-secondary/20 border-border/50"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -64,64 +96,42 @@ export default function Shop() {
           <div className="hidden md:block space-y-6">
             <div className="flex items-center justify-between">
               <h3 className="font-bold text-lg">Filters</h3>
-              <Button variant="ghost" size="sm" className="text-xs text-muted-foreground hover:text-primary" onClick={() => setSelectedCategories([])}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-xs text-muted-foreground hover:text-primary"
+                onClick={() => setSelectedCategories([])}
+              >
                 Reset
               </Button>
             </div>
 
-            <Accordion type="multiple" defaultValue={["category", "brand"]} className="w-full">
+            <Accordion
+              type="multiple"
+              defaultValue={["category"]}
+              className="w-full"
+            >
               <AccordionItem value="category" className="border-border/50">
-                <AccordionTrigger className="text-sm font-medium hover:no-underline">Category</AccordionTrigger>
+                <AccordionTrigger className="text-sm font-medium hover:no-underline">
+                  Category
+                </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-3 pt-2">
                     {categories.map((cat) => (
-                      <div key={cat} className="flex items-center space-x-2">
-                        <Checkbox 
-                          id={`cat-${cat}`} 
-                          checked={selectedCategories.includes(cat)}
-                          onCheckedChange={() => toggleCategory(cat)}
+                      <div key={cat.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={`cat-${cat.id}`}
+                          checked={selectedCategories.includes(cat.id)}
+                          onCheckedChange={() => toggleCategory(cat.id)}
                         />
-                        <Label htmlFor={`cat-${cat}`} className="text-sm font-normal cursor-pointer">{cat}</Label>
+                        <Label
+                          htmlFor={`cat-${cat.id}`}
+                          className="text-sm font-normal cursor-pointer"
+                        >
+                          {cat.name}
+                        </Label>
                       </div>
                     ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="brand" className="border-border/50">
-                <AccordionTrigger className="text-sm font-medium hover:no-underline">Brand</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 pt-2">
-                    {brands.map((brand) => (
-                      <div key={brand} className="flex items-center space-x-2">
-                        <Checkbox id={`brand-${brand}`} />
-                        <Label htmlFor={`brand-${brand}`} className="text-sm font-normal cursor-pointer">{brand}</Label>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="price" className="border-border/50">
-                <AccordionTrigger className="text-sm font-medium hover:no-underline">Price</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-3 pt-2">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="price-1" />
-                      <Label htmlFor="price-1" className="text-sm font-normal">Under $25</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="price-2" />
-                      <Label htmlFor="price-2" className="text-sm font-normal">$25 - $50</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="price-3" />
-                      <Label htmlFor="price-3" className="text-sm font-normal">$50 - $100</Label>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Checkbox id="price-4" />
-                      <Label htmlFor="price-4" className="text-sm font-normal">$100+</Label>
-                    </div>
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -132,23 +142,25 @@ export default function Shop() {
           <div className="md:col-span-3">
             {/* Category Pills */}
             <div className="flex gap-2 overflow-x-auto pb-4 mb-4 scrollbar-hide">
-              <Button 
-                variant={selectedCategories.length === 0 ? "default" : "outline"} 
-                size="sm" 
+              <Button
+                variant={selectedCategories.length === 0 ? "default" : "outline"}
+                size="sm"
                 className="rounded-full px-6"
                 onClick={() => setSelectedCategories([])}
               >
                 All
               </Button>
               {categories.map((cat) => (
-                <Button 
-                  key={cat}
-                  variant={selectedCategories.includes(cat) ? "default" : "outline"} 
-                  size="sm" 
+                <Button
+                  key={cat.id}
+                  variant={
+                    selectedCategories.includes(cat.id) ? "default" : "outline"
+                  }
+                  size="sm"
                   className="rounded-full px-6 whitespace-nowrap"
-                  onClick={() => toggleCategory(cat)}
+                  onClick={() => toggleCategory(cat.id)}
                 >
-                  {cat}
+                  {cat.name}
                 </Button>
               ))}
             </div>
@@ -167,8 +179,16 @@ export default function Shop() {
 
             {filteredProducts.length === 0 && (
               <div className="text-center py-20">
-                <p className="text-lg text-muted-foreground">No products found matching your criteria.</p>
-                <Button variant="link" onClick={() => {setSearchQuery(""); setSelectedCategories([]);}}>
+                <p className="text-lg text-muted-foreground">
+                  No products found matching your criteria.
+                </p>
+                <Button
+                  variant="link"
+                  onClick={() => {
+                    setSearchQuery("");
+                    setSelectedCategories([]);
+                  }}
+                >
                   Clear all filters
                 </Button>
               </div>

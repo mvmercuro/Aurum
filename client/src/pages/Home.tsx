@@ -1,12 +1,11 @@
+import { useAuth } from "@/_core/hooks/useAuth";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Layout } from "@/components/Layout";
 import { ProductCard } from "@/components/ProductCard";
 import { ArrowRight, Truck, ShieldCheck, Clock, MapPin } from "lucide-react";
 import { Link } from "wouter";
-import { products } from "@/lib/products";
-
-// Select top 4 products for featured section
-const featuredProducts = products.slice(0, 4);
+import { productsApi, Product } from "@/lib/api";
 
 const categories = [
   { name: "Flower", image: "/images/flower-category.jpg", desc: "Premium indoor grown buds" },
@@ -15,6 +14,20 @@ const categories = [
 ];
 
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const products = await productsApi.getAll();
+        setFeaturedProducts(products.slice(0, 4));
+      } catch (error) {
+        console.error("Failed to fetch products:", error);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   return (
     <Layout>
       {/* Hero Section */}
@@ -54,9 +67,11 @@ export default function Home() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              <Button size="lg" className="text-lg h-14 px-8 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all hover:scale-105">
-                Shop Now
-              </Button>
+              <Link href="/shop">
+                <Button size="lg" className="text-lg h-14 px-8 bg-primary hover:bg-primary/90 shadow-lg shadow-primary/25 transition-all hover:scale-105">
+                  Shop Now
+                </Button>
+              </Link>
               <Button size="lg" variant="outline" className="text-lg h-14 px-8 border-primary/20 hover:bg-primary/5 backdrop-blur-sm">
                 View Delivery Zones
               </Button>
@@ -128,7 +143,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featuredProducts.map((product) => (
+            {featuredProducts.map((product: Product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
@@ -204,12 +219,16 @@ export default function Home() {
             Join our loyalty program today and get 20% off your first order. Premium cannabis, delivered.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button size="lg" className="text-lg h-14 px-10 shadow-xl shadow-primary/20">
-              Start Shopping
-            </Button>
-            <Button size="lg" variant="outline" className="text-lg h-14 px-10 bg-background/50 backdrop-blur-sm">
-              Sign Up
-            </Button>
+            <Link href="/shop">
+              <Button size="lg" className="text-lg h-14 px-10 shadow-xl shadow-primary/20">
+                Start Shopping
+              </Button>
+            </Link>
+            <Link href="/loyalty">
+              <Button size="lg" variant="outline" className="text-lg h-14 px-10 bg-background/50 backdrop-blur-sm">
+                Sign Up
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
