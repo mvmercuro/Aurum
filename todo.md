@@ -78,3 +78,9 @@
 - [ ] Environment variables documentation
 - [ ] Admin credentials documentation
 - [ ] Deployment guide
+
+
+## New User Request
+- [x] Add "Create Manual Order" button to admin dashboard for phone orders
+- [x] Build manual order form with product selection, customer info, and ZIP validation
+- [x] Connect manual order form to POST /api/orders endpoint

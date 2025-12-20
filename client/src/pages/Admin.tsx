@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Package, Clock, CheckCircle, XCircle, Truck } from "lucide-react";
 import { toast } from "sonner";
+import { ManualOrderDialog } from "@/components/ManualOrderDialog";
 
 interface OrderItem {
   productId: number;
@@ -168,9 +169,12 @@ export default function Admin() {
   return (
     <div className="min-h-screen bg-background">
       <div className="container py-8">
-        <div className="mb-8">
-          <h1 className="font-display text-4xl font-bold mb-2">Admin Dashboard</h1>
-          <p className="text-muted-foreground">Manage delivery orders and drivers</p>
+        <div className="mb-8 flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
+            <p className="text-muted-foreground">Manage orders and deliveries</p>
+          </div>
+          <ManualOrderDialog onOrderCreated={fetchOrders} />
         </div>
 
         {/* Stats */}
