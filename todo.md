@@ -1,51 +1,8 @@
 # SFV Premium Cannabis Web App TODO
 
-## Database Schema
-- [ ] Create Region table (SFV, LA, OC with delivery fees and minimums)
-- [ ] Create ZipCode table (linked to regions)
-- [ ] Create Category table (Flower, Vapes, Edibles, etc.)
-- [ ] Create Product table (with inventory, pricing, images)
-- [ ] Create Order table (with customer info, status, payment method)
-- [ ] Create Driver table (name, phone, active status)
-- [ ] Create OrderAssignment table (link orders to drivers)
+## Completed Features ✅
 
-## Customer Features
-- [ ] Product catalog page with categories, search, filters (connected to database)
-- [ ] Product detail page (connected to database)
-- [ ] "Request Delivery" form (Name, Phone, Address, ZIP validation)
-- [ ] Order confirmation page
-- [ ] Order status lookup page (by order number + phone)
-
-## Admin Features
-- [ ] Admin login page
-- [ ] Admin dashboard (view orders by status)
-- [ ] Order management (accept/decline, assign driver, update status)
-- [ ] Product management (CRUD operations)
-- [ ] Service area management (manage ZIP codes per region)
-- [ ] Driver management
-
-## Technical Features
-- [ ] PWA setup (manifest, icons, offline shell)
-- [ ] Mobile-first responsive design
-- [ ] Age gate modal (21+) - already implemented
-- [ ] Payment method: Cash/Debit on delivery (no online payment)
-- [ ] ZIP code validation against database
-
-## Documentation
-- [ ] README with setup instructions
-- [ ] Environment variables documentation
-- [ ] Admin login credentials documentation
-
-
-## API Endpoints
-- [ ] GET /api/products (list all products with filters)
-- [ ] GET /api/products/:id (get single product)
-- [ ] GET /api/categories (list all categories)
-- [ ] POST /api/orders (create delivery request)
-- [ ] GET /api/orders/:orderNumber (lookup order status)
-- [ ] POST /api/zip-check (validate ZIP code and get region info)
-
-## Completed
+### Database & Backend
 - [x] Create Region table (SFV, LA, OC with delivery fees and minimums)
 - [x] Create ZipCode table (linked to regions)
 - [x] Create Category table (Flower, Vapes, Edibles, etc.)
@@ -54,13 +11,70 @@
 - [x] Create Driver table (name, phone, active status)
 - [x] Create OrderAssignment table (link orders to drivers)
 - [x] Seed data for regions, ZIPs, categories, and sample products
-- [x] Age gate modal implemented
 
+### API Endpoints
 - [x] GET /api/products (list all products with filters)
 - [x] GET /api/products/:id (get single product)
 - [x] GET /api/categories (list all categories)
 - [x] POST /api/orders (create delivery request)
 - [x] GET /api/orders/:orderNumber (lookup order status)
 - [x] POST /api/orders/check-zip (validate ZIP code and get region info)
-- [x] Product catalog page connected to database
-- [x] Home page connected to database
+- [x] GET /api/admin/orders (get all orders for admin)
+- [x] GET /api/admin/drivers (get all drivers)
+- [x] PATCH /api/admin/orders/:id/status (update order status)
+- [x] POST /api/admin/orders/:id/assign (assign driver to order)
+
+### Customer-Facing Pages
+- [x] Home page with hero, staff picks, and features
+- [x] Shop page with product grid and filters
+- [x] Product detail page with full product info
+- [x] Delivery Zones page with service area information
+- [x] About Us page with company story and values
+- [x] Loyalty/Rewards page with tier system
+- [x] Track Order page with order status lookup
+- [x] Age gate modal (21+ verification)
+- [x] First-Time Customer modal with welcome offer
+- [x] Delivery Request modal with ZIP validation
+
+### Admin Dashboard
+- [x] Admin dashboard at /admin route
+- [x] Order list with filtering by status
+- [x] Order statistics (total, new, active, delivered)
+- [x] Order detail cards with customer info and items
+- [x] Driver assignment dropdown
+- [x] Status update controls
+- [x] Real-time order management
+
+### Design & UX
+- [x] "Valley Sunset Noir" premium dark theme
+- [x] Unique strain photography for each product
+- [x] Responsive navigation with mobile menu
+- [x] Sticky header with scroll effects
+- [x] Professional footer with compliance info
+- [x] Consistent branding throughout
+
+## Remaining Tasks
+
+### Testing & QA
+- [ ] Test complete delivery request flow (customer submits → appears in admin)
+- [ ] Test ZIP code validation (valid vs invalid ZIPs)
+- [ ] Test order status updates (admin changes status → customer sees update)
+- [ ] Test driver assignment workflow
+- [ ] Mobile responsiveness testing
+- [ ] Cross-browser compatibility
+
+### Nice-to-Have Features
+- [ ] Admin login/authentication
+- [ ] Product management UI in admin (add/edit/delete products)
+- [ ] Driver management UI (add/edit drivers)
+- [ ] Email/SMS notifications for order updates
+- [ ] PWA manifest for "Add to Home Screen"
+- [ ] Order confirmation page after successful submission
+- [ ] Customer reviews/ratings system
+- [ ] Related products section on product detail page
+
+### Documentation
+- [ ] README with setup instructions
+- [ ] Environment variables documentation
+- [ ] Admin credentials documentation
+- [ ] Deployment guide

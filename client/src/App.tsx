@@ -7,17 +7,24 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import Home from "./pages/Home";
 import Shop from "./pages/Shop";
 import ProductDetail from "./pages/ProductDetail";
+import DeliveryZones from "./pages/DeliveryZones";
+import AboutUs from "./pages/AboutUs";
 import Loyalty from "./pages/Loyalty";
+import Admin from "./pages/Admin";
+import TrackOrder from "./pages/TrackOrder";
 import { FirstTimeModal } from "./components/FirstTimeModal";
 
 function Router() {
-  // make sure to consider if you need authentication for certain routes
   return (
     <Switch>
       <Route path={"/"} component={Home} />
       <Route path={"/shop"} component={Shop} />
       <Route path={"/product/:id"} component={ProductDetail} />
+      <Route path={"/delivery-zones"} component={DeliveryZones} />
+      <Route path={"/about"} component={AboutUs} />
       <Route path={"/loyalty"} component={Loyalty} />
+      <Route path={"/admin"} component={Admin} />
+      <Route path={"/track"} component={TrackOrder} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

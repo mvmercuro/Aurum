@@ -23,6 +23,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     { href: "/loyalty", label: "Rewards" },
     { href: "/delivery-zones", label: "Delivery Zones" },
     { href: "/about", label: "About Us" },
+    { href: "/track", label: "Track Order" },
   ];
 
   return (
