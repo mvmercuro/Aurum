@@ -26,18 +26,20 @@ export function ProductCard({ product }: { product: Product }) {
           <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-transparent to-transparent opacity-60" />
           
           {/* Quick Add Button (Visible on Hover) */}
-          <div className="absolute bottom-4 right-4 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
-            <Button 
-              size="icon" 
-              className="rounded-full h-10 w-10 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
-              onClick={(e) => {
-                e.preventDefault();
-                setShowDeliveryModal(true);
-              }}
-            >
-              <ShoppingBag className="h-4 w-4" />
-            </Button>
-          </div>
+          {product.inventoryCount > 0 && (
+            <div className="absolute bottom-4 right-4 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 z-10">
+              <Button 
+                size="icon" 
+                className="rounded-full h-10 w-10 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setShowDeliveryModal(true);
+                }}
+              >
+                <ShoppingBag className="h-4 w-4" />
+              </Button>
+            </div>
+          )}
 
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
@@ -46,9 +48,19 @@ export function ProductCard({ product }: { product: Product }) {
                 {product.strainType.toUpperCase()}
               </Badge>
             )}
-            {product.inventoryCount < 5 && product.inventoryCount > 0 && (
-              <Badge variant="destructive" className="bg-destructive/80 backdrop-blur-sm text-xs font-medium">
+            {product.inventoryCount === 0 && (
+              <Badge variant="destructive" className="bg-destructive/90 backdrop-blur-sm text-xs font-medium">
+                Out of Stock
+              </Badge>
+            )}
+            {product.inventoryCount > 0 && product.inventoryCount < 5 && (
+              <Badge variant="secondary" className="bg-yellow-500/80 text-yellow-950 backdrop-blur-sm text-xs font-medium">
                 Low Stock
+              </Badge>
+            )}
+            {product.inventoryCount >= 5 && (
+              <Badge variant="secondary" className="bg-green-500/80 text-green-950 backdrop-blur-sm text-xs font-medium">
+                In Stock
               </Badge>
             )}
           </div>

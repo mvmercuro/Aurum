@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,9 +10,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Package, Clock, CheckCircle, XCircle, Truck } from "lucide-react";
+import { Package, Clock, CheckCircle, XCircle, Truck, LogOut, Printer } from "lucide-react";
 import { toast } from "sonner";
 import { ManualOrderDialog } from "@/components/ManualOrderDialog";
+import { InventoryManager } from "@/components/InventoryManager";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface OrderItem {
   productId: number;
@@ -53,10 +56,20 @@ interface Driver {
 }
 
 export default function Admin() {
+  const [, setLocation] = useLocation();
   const [orders, setOrders] = useState<Order[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState("orders");
+
+  // Check authentication
+  useEffect(() => {
+    const isAuth = localStorage.getItem("adminAuth");
+    if (!isAuth) {
+      setLocation("/admin/login");
+    }
+  }, [setLocation]);
 
   useEffect(() => {
     fetchOrders();
@@ -84,6 +97,119 @@ export default function Admin() {
     } catch (error) {
       console.error("Failed to fetch drivers:", error);
     }
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("adminAuth");
+    toast.success("Logged out successfully");
+    setLocation("/admin/login");
+  };
+
+  const handlePrintReceipt = (order: Order) => {
+    const printWindow = window.open("", "_blank");
+    if (!printWindow) return;
+
+    const receiptHTML = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Order Receipt - ${order.orderNumber}</title>
+        <style>
+          body { font-family: monospace; padding: 20px; max-width: 400px; margin: 0 auto; }
+          h1 { font-size: 18px; text-align: center; margin-bottom: 20px; }
+          .header { border-bottom: 2px dashed #000; padding-bottom: 10px; margin-bottom: 10px; }
+          .section { margin: 15px 0; }
+          .label { font-weight: bold; }
+          .items { border-top: 1px solid #000; border-bottom: 1px solid #000; padding: 10px 0; margin: 10px 0; }
+          .item { display: flex; justify-content: space-between; margin: 5px 0; }
+          .totals { margin-top: 10px; }
+          .total-line { display: flex; justify-content: space-between; margin: 3px 0; }
+          .grand-total { font-weight: bold; font-size: 16px; border-top: 2px solid #000; padding-top: 5px; margin-top: 5px; }
+          @media print { button { display: none; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>SFV PREMIUM CANNABIS</h1>
+          <div style="text-align: center;">Delivery Receipt</div>
+        </div>
+        
+        <div class="section">
+          <div><span class="label">Order #:</span> ${order.orderNumber}</div>
+          <div><span class="label">Date:</span> ${new Date(order.createdAt).toLocaleString()}</div>
+          <div><span class="label">Status:</span> ${order.status}</div>
+        </div>
+
+        <div class="section">
+          <div class="label">Customer:</div>
+          <div>${order.customerName}</div>
+          <div>${order.customerPhone}</div>
+        </div>
+
+        <div class="section">
+          <div class="label">Delivery Address:</div>
+          <div>${order.address1}</div>
+          ${order.address2 ? `<div>${order.address2}</div>` : ""}
+          <div>${order.city}, CA ${order.zip}</div>
+          <div>${order.regionName} Region</div>
+        </div>
+
+        ${order.assignment ? `
+        <div class="section">
+          <div class="label">Driver:</div>
+          <div>${order.assignment.driverName}</div>
+        </div>
+        ` : ""}
+
+        <div class="items">
+          <div class="label">Items:</div>
+          ${order.items.map(item => `
+            <div class="item">
+              <span>${item.quantity}x ${item.productName}</span>
+              <span>$${((item.priceCentsAtPurchase * item.quantity) / 100).toFixed(2)}</span>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="totals">
+          <div class="total-line">
+            <span>Subtotal:</span>
+            <span>$${(order.subtotalCents / 100).toFixed(2)}</span>
+          </div>
+          <div class="total-line">
+            <span>Delivery Fee:</span>
+            <span>$${(order.deliveryFeeCents / 100).toFixed(2)}</span>
+          </div>
+          <div class="total-line grand-total">
+            <span>TOTAL:</span>
+            <span>$${(order.totalCents / 100).toFixed(2)}</span>
+          </div>
+        </div>
+
+        <div class="section">
+          <div class="label">Payment Method:</div>
+          <div>${order.paymentMethod === "cash" ? "Cash on Delivery" : "Debit on Delivery"}</div>
+        </div>
+
+        ${order.notes ? `
+        <div class="section">
+          <div class="label">Notes:</div>
+          <div>${order.notes}</div>
+        </div>
+        ` : ""}
+
+        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 2px dashed #000;">
+          <div>Thank you for choosing SFV Premium!</div>
+          <div style="font-size: 10px; margin-top: 10px;">License # C9-0000000-LIC</div>
+        </div>
+
+        <button onclick="window.print()" style="margin-top: 20px; padding: 10px 20px; width: 100%; cursor: pointer;">Print Receipt</button>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(receiptHTML);
+    printWindow.document.close();
   };
 
   const updateStatus = async (orderId: number, newStatus: string) => {
@@ -174,11 +300,25 @@ export default function Admin() {
             <h1 className="text-4xl font-bold mb-2">Admin Dashboard</h1>
             <p className="text-muted-foreground">Manage orders and deliveries</p>
           </div>
-          <ManualOrderDialog onOrderCreated={fetchOrders} />
+          <div className="flex gap-3">
+            <ManualOrderDialog onOrderCreated={fetchOrders} />
+            <Button variant="outline" onClick={handleLogout} className="gap-2">
+              <LogOut className="h-4 w-4" />
+              Logout
+            </Button>
+          </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mb-8">
+        {/* Tabs */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="mb-8">
+            <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="inventory">Inventory</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="orders" className="space-y-8">
+            {/* Stats */}
+            <div className="grid grid-cols-4 gap-4">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium text-muted-foreground">Total Orders</CardTitle>
@@ -213,8 +353,8 @@ export default function Admin() {
           </Card>
         </div>
 
-        {/* Filter */}
-        <div className="mb-6">
+            {/* Filter */}
+            <div>
           <Select value={filter} onValueChange={setFilter}>
             <SelectTrigger className="w-[200px]">
               <SelectValue placeholder="Filter by status" />
@@ -231,8 +371,8 @@ export default function Admin() {
           </Select>
         </div>
 
-        {/* Orders List */}
-        <div className="space-y-4">
+            {/* Orders List */}
+            <div className="space-y-4">
           {filteredOrders.length === 0 ? (
             <Card>
               <CardContent className="py-12 text-center text-muted-foreground">
@@ -306,8 +446,9 @@ export default function Admin() {
                   </div>
 
                   {/* Actions */}
-                  <div className="mt-6 pt-6 border-t flex gap-4">
-                    <div className="flex-1">
+                  <div className="mt-6 pt-6 border-t space-y-4">
+                    <div className="flex gap-4">
+                      <div className="flex-1">
                       <label className="text-sm font-medium mb-2 block">Assign Driver</label>
                       <Select
                         value={order.assignment?.driverId.toString() || ""}
@@ -331,31 +472,46 @@ export default function Admin() {
                       )}
                     </div>
 
-                    <div className="flex-1">
-                      <label className="text-sm font-medium mb-2 block">Update Status</label>
-                      <Select
-                        value={order.status}
-                        onValueChange={(value) => updateStatus(order.id, value)}
-                      >
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="new">New</SelectItem>
-                          <SelectItem value="accepted">Accepted</SelectItem>
-                          <SelectItem value="preparing">Preparing</SelectItem>
-                          <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
-                          <SelectItem value="delivered">Delivered</SelectItem>
-                          <SelectItem value="canceled">Canceled</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <div className="flex-1">
+                        <label className="text-sm font-medium mb-2 block">Update Status</label>
+                        <Select
+                          value={order.status}
+                          onValueChange={(value) => updateStatus(order.id, value)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="new">New</SelectItem>
+                            <SelectItem value="accepted">Accepted</SelectItem>
+                            <SelectItem value="preparing">Preparing</SelectItem>
+                            <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
+                            <SelectItem value="delivered">Delivered</SelectItem>
+                            <SelectItem value="canceled">Canceled</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
+                    <Button 
+                      variant="outline" 
+                      className="w-full gap-2"
+                      onClick={() => handlePrintReceipt(order)}
+                    >
+                      <Printer className="h-4 w-4" />
+                      Print Receipt
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
             ))
           )}
-        </div>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="inventory">
+            <InventoryManager />
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

@@ -11,6 +11,7 @@ import DeliveryZones from "./pages/DeliveryZones";
 import AboutUs from "./pages/AboutUs";
 import Loyalty from "./pages/Loyalty";
 import Admin from "./pages/Admin";
+import AdminLogin from "./pages/AdminLogin";
 import TrackOrder from "./pages/TrackOrder";
 import { FirstTimeModal } from "./components/FirstTimeModal";
 
@@ -23,6 +24,7 @@ function Router() {
       <Route path={"/delivery-zones"} component={DeliveryZones} />
       <Route path={"/about"} component={AboutUs} />
       <Route path={"/loyalty"} component={Loyalty} />
+      <Route path={"/admin/login"} component={AdminLogin} />
       <Route path={"/admin"} component={Admin} />
       <Route path={"/track"} component={TrackOrder} />
       <Route path={"/404"} component={NotFound} />

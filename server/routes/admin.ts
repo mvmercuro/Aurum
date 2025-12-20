@@ -171,4 +171,36 @@ router.get("/drivers", async (req, res) => {
   }
 });
 
+// Update product inventory
+router.patch("/products/:id/inventory", async (req, res) => {
+  try {
+    const db = await getDb();
+    if (!db) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+
+    const { id } = req.params;
+    const { inventoryCount } = req.body;
+
+    if (typeof inventoryCount !== "number" || inventoryCount < 0) {
+      return res.status(400).json({ error: "Invalid inventory count" });
+    }
+
+    // Update inventory and auto-disable if out of stock
+    await db
+      .update(products)
+      .set({
+        inventoryCount,
+        isActive: inventoryCount > 0,
+        updatedAt: new Date(),
+      })
+      .where(eq(products.id, parseInt(id)));
+
+    res.json({ success: true, inventoryCount });
+  } catch (error) {
+    console.error("Failed to update inventory:", error);
+    res.status(500).json({ error: "Failed to update inventory" });
+  }
+});
+
 export default router;

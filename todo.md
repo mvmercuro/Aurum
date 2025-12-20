@@ -84,3 +84,14 @@
 - [x] Add "Create Manual Order" button to admin dashboard for phone orders
 - [x] Build manual order form with product selection, customer info, and ZIP validation
 - [x] Connect manual order form to POST /api/orders endpoint
+
+
+## New Features (User Requested)
+- [x] Admin password protection with login page
+- [x] Print order receipt functionality
+- [x] Product inventory tracking (stock levels)
+- [x] Auto mark products as "Out of Stock" when inventory = 0
+- [x] Show stock levels in admin dashboard
+- [x] Display stock badges on product cards (In Stock, Low Stock, Out of Stock)
+- [x] Disable ordering for out-of-stock products
+- [x] Inventory management tab in admin dashboard
