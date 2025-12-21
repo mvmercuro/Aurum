@@ -2,6 +2,9 @@ import { Router } from "express";
 import { getDb } from "../db";
 import { orders, orderItems, products, drivers, regions, orderAssignments } from "../../drizzle/schema";
 import { eq, desc, and } from "drizzle-orm";
+import multer from "multer";
+import { storagePut } from "../storage";
+import crypto from "crypto";
 
 const router = Router();
 
@@ -204,3 +207,173 @@ router.patch("/products/:id/inventory", async (req, res) => {
 });
 
 export default router;
+
+// Get all products (including inactive ones for admin)
+router.get("/products", async (req, res) => {
+  try {
+    const db = await getDb();
+    if (!db) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+
+    const { categories } = await import("../../drizzle/schema");
+
+    const allProducts = await db
+      .select({
+        id: products.id,
+        name: products.name,
+        description: products.description,
+        priceCents: products.priceCents,
+        imageUrl: products.imageUrl,
+        categoryId: products.categoryId,
+        categoryName: categories.name,
+        inventoryCount: products.inventoryCount,
+        thcPercentage: products.thcPercentage,
+        cbdPercentage: products.cbdPercentage,
+        strainType: products.strainType,
+        brand: products.brand,
+        weight: products.weight,
+        effects: products.effects,
+        isActive: products.isActive,
+      })
+      .from(products)
+      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .orderBy(desc(products.createdAt));
+
+    res.json(allProducts);
+  } catch (error) {
+    console.error("Failed to fetch products:", error);
+    res.status(500).json({ error: "Failed to fetch products" });
+  }
+});
+
+// Create new product
+router.post("/products", async (req, res) => {
+  try {
+    const db = await getDb();
+    if (!db) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+
+    const {
+      name,
+      description,
+      priceCents,
+      imageUrl,
+      categoryId,
+      inventoryCount,
+      thcPercentage,
+      cbdPercentage,
+      strainType,
+      brand,
+      weight,
+      effects,
+      isActive,
+    } = req.body;
+
+    const result = await db.insert(products).values({
+      name,
+      description,
+      priceCents,
+      imageUrl,
+      categoryId,
+      inventoryCount,
+      thcPercentage,
+      cbdPercentage,
+      strainType,
+      brand,
+      weight,
+      effects,
+      isActive,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    res.json({ success: true, id: result[0].insertId });
+  } catch (error) {
+    console.error("Failed to create product:", error);
+    res.status(500).json({ error: "Failed to create product" });
+  }
+});
+
+// Update product
+router.patch("/products/:id", async (req, res) => {
+  try {
+    const db = await getDb();
+    if (!db) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+
+    const { id } = req.params;
+    const updateData = { ...req.body, updatedAt: new Date() };
+
+    await db
+      .update(products)
+      .set(updateData)
+      .where(eq(products.id, parseInt(id)));
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Failed to update product:", error);
+    res.status(500).json({ error: "Failed to update product" });
+  }
+});
+
+// Delete product
+router.delete("/products/:id", async (req, res) => {
+  try {
+    const db = await getDb();
+    if (!db) {
+      return res.status(503).json({ error: "Database not available" });
+    }
+
+    const { id } = req.params;
+
+    await db.delete(products).where(eq(products.id, parseInt(id)));
+
+    res.json({ success: true });
+  } catch (error) {
+    console.error("Failed to delete product:", error);
+    res.status(500).json({ error: "Failed to delete product" });
+  }
+});
+
+// Upload product image
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new Error("Only image files are allowed"));
+    }
+  },
+});
+
+router.post("/products/upload-image", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file provided" });
+    }
+
+    // Generate unique filename
+    const fileExtension = req.file.originalname.split(".").pop();
+    const randomSuffix = crypto.randomBytes(8).toString("hex");
+    const fileName = `products/${Date.now()}-${randomSuffix}.${fileExtension}`;
+
+    // Upload to S3
+    const { url } = await storagePut(
+      fileName,
+      req.file.buffer,
+      req.file.mimetype
+    );
+
+    res.json({ success: true, url });
+  } catch (error) {
+    console.error("Failed to upload image:", error);
+    res.status(500).json({ error: "Failed to upload image" });
+  }
+});

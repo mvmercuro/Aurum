@@ -14,6 +14,7 @@ import { Package, Clock, CheckCircle, XCircle, Truck, LogOut, Printer } from "lu
 import { toast } from "sonner";
 import { ManualOrderDialog } from "@/components/ManualOrderDialog";
 import { InventoryManager } from "@/components/InventoryManager";
+import { ProductManager } from "@/components/ProductManager";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 interface OrderItem {
@@ -313,6 +314,7 @@ export default function Admin() {
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="mb-8">
             <TabsTrigger value="orders">Orders</TabsTrigger>
+            <TabsTrigger value="products">Products</TabsTrigger>
             <TabsTrigger value="inventory">Inventory</TabsTrigger>
           </TabsList>
 
@@ -506,6 +508,10 @@ export default function Admin() {
             ))
           )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="products">
+            <ProductManager />
           </TabsContent>
 
           <TabsContent value="inventory">
