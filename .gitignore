@@ -43,3 +43,6 @@ server/_core/index.ts
 server/routes/
 vite.config.ts
 vercel.json
+
+.vercel
+.env*.local
