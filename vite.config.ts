@@ -7,7 +7,13 @@ import { defineConfig } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime()];
+const isDev = process.env.NODE_ENV === 'development';
+const plugins = [
+  react(),
+  tailwindcss(),
+  isDev && jsxLocPlugin(),
+  isDev && vitePluginManusRuntime()
+].filter(Boolean);
 
 export default defineConfig({
   plugins,
@@ -24,6 +30,25 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor': ['react', 'react-dom', 'wouter'],
+          'ui': [
+            '@radix-ui/react-accordion',
+            '@radix-ui/react-alert-dialog',
+            '@radix-ui/react-dialog',
+            '@radix-ui/react-dropdown-menu',
+            '@radix-ui/react-popover',
+            '@radix-ui/react-select',
+            '@radix-ui/react-tooltip'
+          ],
+          'charts': ['recharts'],
+          'animation': ['framer-motion'],
+          'query': ['@tanstack/react-query', '@trpc/client', '@trpc/react-query']
+        }
+      }
+    }
   },
   server: {
     host: true,

@@ -1,14 +1,13 @@
-import { drizzle } from "drizzle-orm/mysql2";
-import mysql from "mysql2/promise";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import * as schema from "../drizzle/schema.js";
 
 if (!process.env.DATABASE_URL) {
   throw new Error("DATABASE_URL environment variable is required");
 }
 
-const connection = await mysql.createConnection(process.env.DATABASE_URL);
-
-const db = drizzle(connection, { schema, mode: "default" });
+const client = postgres(process.env.DATABASE_URL);
+const db = drizzle(client, { schema });
 
 console.log("🌱 Seeding database...\n");
 
@@ -245,7 +244,7 @@ const driverInserts = [
 await db.insert(schema.drivers).values(driverInserts);
 console.log("✓ Drivers created\n");
 
-await connection.end();
+await client.end();
 
 console.log("✅ Database seeded successfully!\n");
 console.log("Summary:");

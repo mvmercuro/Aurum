@@ -216,7 +216,7 @@ router.get("/products", async (req, res) => {
       return res.status(503).json({ error: "Database not available" });
     }
 
-    const { categories } = await import("../../drizzle/schema");
+    const { categories: categoriesTable } = await import("../../drizzle/schema");
 
     const allProducts = await db
       .select({
@@ -226,7 +226,7 @@ router.get("/products", async (req, res) => {
         priceCents: products.priceCents,
         imageUrl: products.imageUrl,
         categoryId: products.categoryId,
-        categoryName: categories.name,
+        categoryName: categoriesTable.name,
         inventoryCount: products.inventoryCount,
         thcPercentage: products.thcPercentage,
         cbdPercentage: products.cbdPercentage,
@@ -237,7 +237,7 @@ router.get("/products", async (req, res) => {
         isActive: products.isActive,
       })
       .from(products)
-      .leftJoin(categories, eq(products.categoryId, categories.id))
+      .leftJoin(categoriesTable, eq(products.categoryId, categoriesTable.id))
       .orderBy(desc(products.createdAt));
 
     res.json(allProducts);
@@ -287,9 +287,9 @@ router.post("/products", async (req, res) => {
       isActive,
       createdAt: new Date(),
       updatedAt: new Date(),
-    });
+    }).returning({ id: products.id });
 
-    res.json({ success: true, id: result[0].insertId });
+    res.json({ success: true, id: result[0].id });
   } catch (error) {
     console.error("Failed to create product:", error);
     res.status(500).json({ error: "Failed to create product" });

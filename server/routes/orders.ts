@@ -38,7 +38,7 @@ router.post("/check-zip", async (req, res) => {
       .limit(1);
 
     if (result.length === 0) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         error: "Sorry, we don't deliver to this ZIP code yet",
         available: false
       });
@@ -130,7 +130,7 @@ router.post("/", async (req, res) => {
     const orderNumber = `SFV${nanoid(8).toUpperCase()}`;
 
     // Create order
-    const orderResult: any = await db.insert(orders).values({
+    const orderResult = await db.insert(orders).values({
       orderNumber,
       status: "new",
       regionId,
@@ -147,9 +147,9 @@ router.post("/", async (req, res) => {
       state: "CA",
       zip,
       notes: notes || null,
-    });
+    }).returning({ id: orders.id });
 
-    const orderId = Number(orderResult.insertId);
+    const orderId = orderResult[0].id;
 
     // Create order items
     for (const item of orderItemsData) {
