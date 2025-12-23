@@ -21,7 +21,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { getLoginUrl } from "@/lib/const";
+import { createClient } from "@/lib/supabase/client";
 import { useIsMobile } from "@/hooks/useMobile";
 import { LayoutDashboard, LogOut, PanelLeft, Users } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
@@ -72,7 +72,7 @@ export default function DashboardLayout({
           </div>
           <Button
             onClick={() => {
-              window.location.href = getLoginUrl();
+              window.location.href = "/admin/login";
             }}
             size="lg"
             className="w-full shadow-lg hover:shadow-xl transition-all"
@@ -108,9 +108,15 @@ function DashboardLayoutContent({
   children,
   setSidebarWidth,
 }: DashboardLayoutContentProps) {
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
   const location = usePathname();
   const router = useRouter();
+
+  const logout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    window.location.href = "/admin/login";
+  };
   const { state, toggleSidebar } = useSidebar();
   const isCollapsed = state === "collapsed";
   const [isResizing, setIsResizing] = useState(false);

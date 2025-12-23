@@ -1,30 +1,23 @@
-import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { sdk } from '@/server/_core/sdk';
+import { createClient } from '@/lib/supabase/server';
 import { getUserByOpenId } from '@/lib/db';
 import type { User } from '@/drizzle/schema';
 
 /**
- * Get the current authenticated user from the session cookie
+ * Get the current authenticated user from Supabase Auth
  * Returns null if no valid session exists
  */
 export async function getUser(): Promise<User | null> {
   try {
-    const cookieStore = await cookies();
-    const sessionCookie = cookieStore.get('session');
+    const supabase = await createClient();
+    const { data: { user: authUser }, error } = await supabase.auth.getUser();
 
-    if (!sessionCookie) {
+    if (error || !authUser) {
       return null;
     }
 
-    // Verify session
-    const session = await sdk.verifySession(sessionCookie.value);
-    if (!session) {
-      return null;
-    }
-
-    // Get user from database
-    const user = await getUserByOpenId(session.openId);
+    // Get user from database using the Supabase User ID (which maps to openId in existing schema)
+    const user = await getUserByOpenId(authUser.id);
     return user || null;
   } catch (error) {
     console.error('Auth error:', error);
@@ -38,11 +31,11 @@ export async function getUser(): Promise<User | null> {
  */
 export async function requireAuth(): Promise<User> {
   const user = await getUser();
-  
+
   if (!user) {
     redirect('/admin/login');
   }
-  
+
   return user;
 }
 
@@ -52,11 +45,12 @@ export async function requireAuth(): Promise<User> {
  */
 export async function requireAdmin(): Promise<User> {
   const user = await requireAuth();
-  
+
   if (user.role !== 'admin') {
+    // Redirect to home if logged in but not admin
     redirect('/');
   }
-  
+
   return user;
 }
 
