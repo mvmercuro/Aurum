@@ -1,6 +1,6 @@
 # Aurum Cannabis Delivery Platform
 
-A complete cannabis delivery e-commerce platform with product management, order processing, inventory tracking, and admin dashboard.
+A complete cannabis delivery e-commerce platform built with Next.js 15, PostgreSQL, and Drizzle ORM.
 
 ## 🌟 Features
 
@@ -20,11 +20,11 @@ A complete cannabis delivery e-commerce platform with product management, order 
 - **Print Receipts** - Generate printable order receipts
 
 ### Technical Features
+- **Next.js 15** - App Router for modern performance and SEO
+- **Server Components** - Optimized data fetching and rendering
+- **PostgreSQL** - Robust relational database (with Drizzle ORM)
 - **Responsive Design** - Mobile-first, works on all devices
 - **Real-time Updates** - Live inventory and order status
-- **Image Upload** - S3-integrated product image storage
-- **Secure Admin** - Password-protected admin dashboard
-- **Database-Driven** - MySQL/TiDB with Drizzle ORM
 
 ---
 
@@ -33,7 +33,7 @@ A complete cannabis delivery e-commerce platform with product management, order 
 ### Prerequisites
 - Node.js 22.13.0+
 - pnpm package manager
-- MySQL or TiDB database
+- PostgreSQL database
 
 ### Installation
 
@@ -44,6 +44,10 @@ cd aurum-cannabis-delivery
 
 # Install dependencies
 pnpm install
+
+# Setup Environment Variables
+# Copy .env.example to .env.local and fill in your details
+cp .env.local.example .env.local
 
 # Run database migrations
 pnpm db:push
@@ -58,37 +62,27 @@ pnpm dev
 ### Access
 - **Frontend:** http://localhost:3000
 - **Admin Dashboard:** http://localhost:3000/admin/login
-- **Admin Password:** `sfvadmin2024`
 
 ---
 
 ## 📁 Project Structure
 
 ```
-├── client/                  # Frontend React application
-│   ├── src/
-│   │   ├── pages/          # Page components (Home, Shop, ProductDetail, Admin, etc.)
-│   │   ├── components/     # Reusable UI components
-│   │   │   ├── ui/         # shadcn/ui components
-│   │   │   ├── ProductCard.tsx
-│   │   │   ├── ProductManager.tsx
-│   │   │   ├── InventoryManager.tsx
-│   │   │   └── ...
-│   │   ├── lib/            # Utilities and API client
-│   │   ├── App.tsx         # Main app with routes
-│   │   └── index.css       # Global styles and Tailwind config
-│   └── public/             # Static assets
-├── server/                  # Backend Express server
-│   ├── routes/
-│   │   ├── admin.ts        # Admin API endpoints
-│   │   ├── products.ts     # Product API endpoints
-│   │   ├── orders.ts       # Order API endpoints
-│   │   └── ...
-│   ├── db.ts               # Database connection and schema
-│   └── index.ts            # Server entry point
-├── drizzle/                 # Database migrations
-├── scripts/                 # Utility scripts
-│   └── seed.mjs            # Database seeding script
+├── app/                     # Next.js App Router
+│   ├── admin/              # Admin routes (protected)
+│   ├── api/                # API Route handlers
+│   ├── product/            # Product pages
+│   └── ...                 # Other routes
+├── components/              # React components
+│   ├── ui/                 # shadcn/ui primitives
+│   └── ...                 # Feature components
+├── drizzle/                 # Database schema and migrations
+├── lib/                     # Utilities and shared logic
+│   ├── api.ts              # API client
+│   ├── auth.ts             # Authentication logic
+│   └── db.ts               # Database connection
+├── public/                  # Static assets
+├── scripts/                 # Utility scripts (seeding, etc.)
 └── package.json            # Dependencies and scripts
 ```
 
@@ -96,25 +90,20 @@ pnpm dev
 
 ## 🛠️ Tech Stack
 
-### Frontend
+### Frontend & Backend
+- **Next.js 15** - Full-stack React framework
 - **React 19** - UI library
 - **Tailwind CSS 4** - Utility-first CSS framework
 - **shadcn/ui** - High-quality React components
-- **Wouter** - Lightweight routing
 - **Lucide React** - Icon library
 
-### Backend
-- **Express** - Web server framework
+### Database & Data
+- **PostgreSQL** - Relational database
 - **Drizzle ORM** - Type-safe database ORM
-- **Multer** - File upload handling
-- **JWT** - Authentication
-
-### Database
-- **MySQL/TiDB** - Relational database
 - **Drizzle Kit** - Database migrations
 
 ### Infrastructure
-- **Vite** - Build tool and dev server
+- **Vercel** - Recommended deployment platform
 - **TypeScript** - Type safety
 - **pnpm** - Package manager
 
@@ -137,8 +126,9 @@ pnpm dev
 
 ## 🔐 Admin Dashboard
 
-### Access
-Navigate to `/admin/login` and enter password: `sfvadmin2024`
+### Methods
+- **OAuth Login**: Secure login via configured OAuth provider
+- **Dev Bypass**: In development, simulated login may be available
 
 ### Features
 
@@ -150,35 +140,14 @@ Navigate to `/admin/login` and enter password: `sfvadmin2024`
 
 **Products Tab:**
 - Add new products with full details
-- Upload product images (up to 5MB)
+- Upload product images
 - Edit existing products
 - Delete products
 
 **Inventory Tab:**
 - View all products with stock levels
 - Update inventory counts
-- Color-coded stock status:
-  - 🟢 In Stock (5+ units)
-  - 🟡 Low Stock (1-4 units)
-  - 🔴 Out of Stock (0 units)
-
----
-
-## 🎨 Customization
-
-### Rebranding
-Currently branded as "SFV Premium Cannabis". To rebrand to "Aurum":
-
-1. Update `client/index.html` - Change `<title>` tag
-2. Update `client/src/App.tsx` - Update header/logo
-3. Update environment variables:
-   - `VITE_APP_TITLE="Aurum"`
-   - `VITE_APP_LOGO="[logo URL]"`
-
-### Styling
-- Global styles: `client/src/index.css`
-- Tailwind config: Inline in `index.css` using `@theme`
-- Component styles: Tailwind utility classes
+- Color-coded stock status
 
 ---
 
@@ -193,64 +162,39 @@ pnpm dev
 # Build for production
 pnpm build
 
-# Preview production build
-pnpm preview
+# Start production server
+pnpm start
 
 # Run database migrations
 pnpm db:push
 
-# Generate database types
-pnpm db:generate
+# Type check
+pnpm type-check
 
-# Seed database
-npx tsx scripts/seed.mjs
+# Lint code
+pnpm lint
 ```
 
 ### Environment Variables
-Managed automatically by Manus platform. Key variables:
-- `DATABASE_URL` - Database connection string
+Managed via `.env.local`. Key variables:
+- `DATABASE_URL` - PostgreSQL connection string
+- `NEXT_PUBLIC_APP_ID` - Application ID
 - `JWT_SECRET` - JWT signing secret
-- `VITE_APP_TITLE` - Application title
-- `VITE_APP_LOGO` - Logo URL
 
 ---
 
 ## 🚀 Deployment
 
-### Manus Platform (Recommended)
-1. Save a checkpoint in the Manus UI
-2. Click "Publish" button
-3. Site is live with custom domain support
-
-### External Hosting
-1. Build the project: `pnpm build`
-2. Set up MySQL database
+### Vercel (Recommended)
+1. Push to GitHub
+2. Import project in Vercel
 3. Configure environment variables
-4. Deploy to Vercel, Railway, or similar
+4. Deploy
 
----
-
-## 📝 Notes
-
-- Admin password should be changed in production
-- Product images are stored in S3
-- Database is pre-seeded with sample data
-- All API endpoints are under `/api/`
-
----
-
-## 🤝 Contributing
-
-This is a private project. For access or questions, contact the repository owner.
+See `DEPLOY_TO_VERCEL.md` for detailed instructions.
 
 ---
 
 ## 📄 License
 
 Private - All Rights Reserved
-
----
-
-## 👥 Team
-
-Built by Mike & Kelvin for Aurum Cannabis Delivery
