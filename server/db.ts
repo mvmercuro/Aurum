@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import { InsertUser, users } from "../drizzle/schema";
-import { ENV } from './_core/env';
+import { ENV } from "@/lib/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
