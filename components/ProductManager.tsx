@@ -143,7 +143,7 @@ export function ProductManager() {
           <div className="space-y-4">
             {products.length === 0 ? (
               <div className="text-center py-12 text-muted-foreground">
-                No products found. Click "Add Product" to create your first product.
+                No products found. Click &quot;Add Product&quot; to create your first product.
               </div>
             ) : (
               products.map((product) => (
@@ -243,7 +243,7 @@ export function ProductManager() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Product</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete "{deletingProduct?.name}"? This action cannot be undone.
+              Are you sure you want to delete &quot;{deletingProduct?.name}&quot;? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

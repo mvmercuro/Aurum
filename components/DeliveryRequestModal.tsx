@@ -19,7 +19,7 @@ export function DeliveryRequestModal({ open, onOpenChange, product }: DeliveryRe
   const [step, setStep] = useState<"form" | "validating" | "success">("form");
   const [loading, setLoading] = useState(false);
   const [orderNumber, setOrderNumber] = useState("");
-  
+
   const [formData, setFormData] = useState({
     customerName: "",
     customerPhone: "",
@@ -59,7 +59,7 @@ export function DeliveryRequestModal({ open, onOpenChange, product }: DeliveryRe
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!zipInfo?.available) {
       toast.error("Please enter a valid delivery ZIP code");
       return;
@@ -273,7 +273,7 @@ export function DeliveryRequestModal({ open, onOpenChange, product }: DeliveryRe
                   {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Submit Request"}
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">
-                  We'll call you to confirm your order and delivery time
+                  We&apos;ll call you to confirm your order and delivery time
                 </p>
               </div>
             </form>
@@ -303,9 +303,9 @@ export function DeliveryRequestModal({ open, onOpenChange, product }: DeliveryRe
             <div className="bg-secondary/30 rounded-lg p-4 space-y-2 text-sm">
               <p className="font-medium">What happens next?</p>
               <ol className="text-left space-y-1 text-muted-foreground">
-                <li>1. We'll call you to confirm your order</li>
+                <li>1. We&apos;ll call you to confirm your order</li>
                 <li>2. Your driver will be assigned</li>
-                <li>3. You'll receive delivery within 45-60 minutes</li>
+                <li>3. You&apos;ll receive delivery within 45-60 minutes</li>
                 <li>4. Driver will verify your ID and collect payment</li>
               </ol>
             </div>

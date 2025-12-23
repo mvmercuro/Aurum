@@ -10,7 +10,7 @@ export function FirstTimeModal() {
   useEffect(() => {
     // Check if user has seen the modal before
     const hasSeenModal = localStorage.getItem("hasSeenFirstTimeModal");
-    
+
     // Show modal after a short delay if they haven't seen it
     if (!hasSeenModal) {
       const timer = setTimeout(() => {
@@ -42,7 +42,7 @@ export function FirstTimeModal() {
             Unlock your <span className="font-bold text-primary">Welcome Goody Bag</span> with your first order!
           </DialogDescription>
         </DialogHeader>
-        
+
         <div className="space-y-4 py-4">
           <div className="bg-secondary/30 p-4 rounded-lg border border-border/50 space-y-2">
             <div className="flex items-center gap-3">
@@ -58,7 +58,7 @@ export function FirstTimeModal() {
               <span className="font-medium">Free Delivery</span>
             </div>
           </div>
-          
+
           <div className="space-y-2">
             <p className="text-xs text-center text-muted-foreground">Enter your email to unlock rewards</p>
             <Input placeholder="name@example.com" className="text-center" />
@@ -70,7 +70,7 @@ export function FirstTimeModal() {
             Claim My Goody Bag
           </Button>
           <Button variant="ghost" size="sm" className="w-full text-muted-foreground" onClick={handleClose}>
-            No thanks, I'll pay full price
+            No thanks, I&apos;ll pay full price
           </Button>
         </DialogFooter>
       </DialogContent>

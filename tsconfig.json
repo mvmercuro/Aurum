@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,14 +23,30 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/hooks/*": ["./hooks/*"],
-      "@/contexts/*": ["./contexts/*"],
-      "@/app/*": ["./app/*"],
-      "@/server/*": ["./server/*"],
-      "@/drizzle/*": ["./drizzle/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/hooks/*": [
+        "./hooks/*"
+      ],
+      "@/contexts/*": [
+        "./contexts/*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ],
+      "@/server/*": [
+        "./server/*"
+      ],
+      "@/drizzle/*": [
+        "./drizzle/*"
+      ]
     }
   },
   "include": [
@@ -46,6 +66,8 @@
     "server/routes",
     "server/index.ts",
     "vite.config.ts",
-    "vitest.config.ts"
+    "vitest.config.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts"
   ]
 }
