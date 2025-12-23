@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -67,7 +69,7 @@ export function ProductManager() {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch("/api/products/categories/all");
+      const response = await fetch("/api/categories/all");
       const data = await response.json();
       setCategories(data);
     } catch (error) {

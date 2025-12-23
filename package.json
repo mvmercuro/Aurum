@@ -83,14 +83,15 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.0.0",
     "@tailwindcss/typography": "^0.5.15",
     "@types/google.maps": "^3.58.1",
-    "@types/node": "^24.7.0",
+    "@types/node": "^24.10.4",
     "@types/react": "^19.2.1",
     "@types/react-dom": "^19.2.1",
     "add": "^2.0.6",
     "autoprefixer": "^10.4.20",
-    "drizzle-kit": "^0.31.4",
+    "drizzle-kit": "^0.31.8",
     "eslint": "^8",
     "eslint-config-next": "15",
     "pnpm": "^10.15.1",

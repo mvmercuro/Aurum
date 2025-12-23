@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, useEffect } from "react";
 import {
   Dialog,
@@ -143,14 +145,20 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (items.length === 0) {
-      toast.error("Please add at least one product");
+      toast.error("Please add at least one product to the order", {
+        description: "Select a product from the dropdown and click 'Add'."
+      });
       return;
     }
 
     if (!regionInfo) {
-      toast.error("Please enter a valid ZIP code in our service area");
+      toast.error("Valid Delivery ZIP Code Required", {
+        description: "Please enter a 5-digit ZIP code inside our service area."
+      });
+      // Try validating again to show specific error
+      if (zip.length === 5) checkZip(zip);
       return;
     }
 
@@ -385,7 +393,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
             <Button type="button" variant="outline" onClick={() => setOpen(false)} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" disabled={loading || items.length === 0 || !regionInfo} className="flex-1">
+            <Button type="submit" disabled={loading} className="flex-1">
               {loading ? "Creating..." : "Create Order"}
             </Button>
           </div>

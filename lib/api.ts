@@ -1,7 +1,9 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "/api",
+  baseURL: typeof window === 'undefined'
+    ? (process.env.NEXT_PUBLIC_APP_URL || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')) + '/api'
+    : '/api',
   headers: {
     "Content-Type": "application/json",
   },
@@ -77,7 +79,7 @@ export const productsApi = {
   },
 
   getCategories: async (): Promise<Category[]> => {
-    const response = await api.get("/products/categories/all");
+    const response = await api.get("/categories/all");
     return response.data;
   },
 };

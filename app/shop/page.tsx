@@ -1,6 +1,6 @@
 import { Layout } from '@/components/Layout';
 import { MenuLayout } from '@/components/shop/MenuLayout';
-import { getDb } from "@/server/db";
+import { getDb } from "@/lib/db";
 import { products, categories } from "@/drizzle/schema";
 import { eq } from "drizzle-orm";
 

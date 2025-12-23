@@ -6,7 +6,17 @@ import { Label } from '@/components/ui/label'
 import { login } from './actions'
 import { useSearchParams } from 'next/navigation'
 
+import { Suspense } from 'react'
+
 export default function AdminLoginPage() {
+  return (
+    <Suspense fallback={<div className="flex h-screen items-center justify-center">Loading...</div>}>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
 

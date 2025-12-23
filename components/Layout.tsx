@@ -32,7 +32,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/30">
       <AgeGate />
-      
+
       {/* Top Bar */}
       <div className="bg-primary/5 text-xs py-2 px-4 text-center border-b border-primary/10 backdrop-blur-sm">
         <span className="font-medium text-primary-foreground/90">
@@ -41,12 +41,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
       </div>
 
       {/* Navigation */}
-      <header 
-        className={`sticky top-0 z-50 w-full transition-all duration-300 border-b ${
-          isScrolled 
-            ? "bg-background/80 backdrop-blur-md border-border shadow-lg shadow-black/5" 
-            : "bg-transparent border-transparent"
-        }`}
+      <header
+        className={`sticky top-0 z-50 w-full transition-all duration-300 border-b ${isScrolled
+          ? "bg-background/80 backdrop-blur-md border-border shadow-lg shadow-black/5"
+          : "bg-transparent border-transparent"
+          }`}
       >
         <div className="container flex h-20 items-center justify-between">
           {/* Mobile Menu */}
@@ -58,13 +57,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
             </SheetTrigger>
             <SheetContent side="left" className="w-[300px] bg-card border-r border-border">
               <div className="flex flex-col gap-8 mt-8">
-                <div className="font-serif text-2xl font-bold text-primary">SFV Premium</div>
+                <div className="font-serif text-2xl font-bold text-primary flex items-center gap-3">
+                  <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain" />
+                  Aurum
+                </div>
                 <nav className="flex flex-col gap-4">
                   {navLinks.map((link) => (
                     <Link key={link.href} href={link.href}>
-                      <div className={`text-lg font-medium transition-colors hover:text-primary cursor-pointer ${
-                        location === link.href ? "text-primary" : "text-muted-foreground"
-                      }`}>
+                      <div className={`text-lg font-medium transition-colors hover:text-primary cursor-pointer ${location === link.href ? "text-primary" : "text-muted-foreground"
+                        }`}>
                         {link.label}
                       </div>
                     </Link>
@@ -87,11 +88,16 @@ export function Layout({ children }: { children: React.ReactNode }) {
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center gap-2 cursor-pointer group">
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center shadow-lg shadow-primary/20 group-hover:shadow-primary/40 transition-all duration-300">
-                <span className="font-serif text-xl font-bold text-white">S</span>
+              <div className="relative h-12 w-auto aspect-square">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/logo.png"
+                  alt="Aurum Logo"
+                  className="h-full w-full object-contain drop-shadow-md group-hover:scale-105 transition-transform duration-300"
+                />
               </div>
               <div className="hidden md:block">
-                <h1 className="font-serif text-xl font-bold tracking-tight leading-none">SFV PREMIUM</h1>
+                <h1 className="font-serif text-xl font-bold tracking-tight leading-none">Aurum</h1>
                 <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-medium">Cannabis Concierge</p>
               </div>
             </div>
@@ -101,13 +107,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <nav className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <Link key={link.href} href={link.href}>
-                <div className={`text-sm font-medium transition-colors hover:text-primary cursor-pointer relative group ${
-                  location === link.href ? "text-primary" : "text-muted-foreground"
-                }`}>
+                <div className={`text-sm font-medium transition-colors hover:text-primary cursor-pointer relative group ${location === link.href ? "text-primary" : "text-muted-foreground"
+                  }`}>
                   {link.label}
-                  <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform origin-left transition-transform duration-300 ${
-                    location === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                  }`} />
+                  <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform origin-left transition-transform duration-300 ${location === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`} />
                 </div>
               </Link>
             ))}
@@ -137,12 +141,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <div className="container py-12 md:py-16">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="space-y-4">
-              <h3 className="font-serif text-xl font-bold">SFV PREMIUM</h3>
+              <h3 className="font-serif text-xl font-bold flex items-center gap-2">
+                <img src="/logo.png" alt="Logo" className="h-6 w-6 object-contain" />
+                Aurum
+              </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Elevating the cannabis experience in the San Fernando Valley. Premium products, professional service, and discreet delivery.
               </p>
             </div>
-            
+
             <div>
               <h4 className="font-bold mb-6 text-sm uppercase tracking-wider text-primary">Shop</h4>
               <ul className="space-y-3 text-sm text-muted-foreground">
@@ -182,7 +189,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </ul>
             </div>
           </div>
-          
+
           <div className="mt-12 pt-8 border-t border-border/50 text-center text-xs text-muted-foreground/60">
             <p className="mb-2">
               GOVERNMENT WARNING: THIS PACKAGE CONTAINS CANNABIS. KEEP OUT OF REACH OF CHILDREN AND ANIMALS. CANNABIS MAY ONLY BE POSSESSED OR CONSUMED BY PERSONS 21 YEARS OF AGE OR OLDER UNLESS THE PERSON IS A QUALIFIED PATIENT. CANNABIS USE WHILE PREGNANT OR BREASTFEEDING MAY BE HARMFUL. CONSUMPTION OF CANNABIS IMPAIRS YOUR ABILITY TO DRIVE AND OPERATE MACHINERY. PLEASE USE EXTREME CAUTION.

@@ -8,10 +8,18 @@ export async function updateSession(request: NextRequest) {
         },
     })
 
+    // Use headers to warn if environment variables are missing
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+        console.warn('Supabase environment variables missing. Using placeholder to prevent crash.')
+    }
+
     // Start with a clean client
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseUrl || 'https://placeholder.supabase.co',
+        supabaseKey || 'placeholder',
         {
             cookies: {
                 getAll() {
@@ -34,7 +42,14 @@ export async function updateSession(request: NextRequest) {
 
     // This will refresh session if expired - required for Server Components
     // https://supabase.com/docs/guides/auth/server-side/nextjs
-    await supabase.auth.getUser()
+    try {
+        await supabase.auth.getUser()
+    } catch (error) {
+        // Ignore error if env vars are missing or invalid
+        if (supabaseUrl && supabaseKey) {
+            console.error('Error refreshing session:', error)
+        }
+    }
 
     return response
 }
