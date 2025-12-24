@@ -58,54 +58,58 @@ export function Layout({ children }: { children: React.ReactNode }) {
             <SheetContent side="left" className="w-[300px] bg-card border-r border-border">
               <div className="flex flex-col gap-8 mt-8">
                 <div className="font-serif text-2xl font-bold text-primary flex items-center gap-3">
-// ...existing code...
-                  <div className="flex flex-col gap-8 mt-8">
-                    <div className="font-serif text-2xl font-bold text-primary flex items-center gap-3">
-                      Aurum
-                    </div>
-// ...existing code...
-                    {/* Logo */}
-                    <Link href="/">
-                      <div className="flex items-center gap-2 cursor-pointer group">
-
-                        <div className="hidden md:block">
-                          <h1 className="font-serif text-xl font-bold tracking-tight leading-none">Aurum</h1>
-                          <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-medium">Cannabis Concierge</p>
-                        </div>
+                  Aurum
+                </div>
+                <nav className="flex flex-col gap-4">
+                  {navLinks.map((link) => (
+                    <Link key={link.href} href={link.href}>
+                      <div className="text-lg font-medium text-foreground/80 hover:text-primary transition-colors">
+                        {link.label}
                       </div>
                     </Link>
-
-                    {/* Desktop Nav */}
-                    <nav className="hidden lg:flex items-center gap-8">
-                      {navLinks.map((link) => (
-                        <Link key={link.href} href={link.href}>
-                          <div className={`text-sm font-medium transition-colors hover:text-primary cursor-pointer relative group ${location === link.href ? "text-primary" : "text-muted-foreground"
-                            }`}>
-                            {link.label}
-                            <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform origin-left transition-transform duration-300 ${location === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
-                              }`} />
-                          </div>
-                        </Link>
-                      ))}
-                    </nav>
-
-                    {/* Actions */}
-                    <div className="flex items-center gap-4">
-                      <Button variant="ghost" size="sm" className="hidden md:flex gap-2 text-muted-foreground hover:text-primary">
-                        <MapPin className="h-4 w-4" />
-                        <span className="text-xs">Delivering to SFV</span>
-                      </Button>
-                      <Button size="icon" variant="outline" className="relative border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 group">
-                        <ShoppingBag className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
-                        <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center shadow-sm">
-                          0
-                        </span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
+                  ))}
+                </nav>
+              </div>
             </SheetContent>
           </Sheet>
+
+          {/* Logo */}
+          <Link href="/">
+            <div className="flex items-center gap-2 cursor-pointer group">
+              <div className="hidden md:block">
+                <h1 className="font-serif text-xl font-bold tracking-tight leading-none">Aurum</h1>
+                <p className="text-[10px] tracking-widest uppercase text-muted-foreground font-medium">Cannabis Concierge</p>
+              </div>
+            </div>
+          </Link>
+
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-8">
+            {navLinks.map((link) => (
+              <Link key={link.href} href={link.href}>
+                <div className={`text-sm font-medium transition-colors hover:text-primary cursor-pointer relative group ${location === link.href ? "text-primary" : "text-muted-foreground"
+                  }`}>
+                  {link.label}
+                  <span className={`absolute -bottom-1 left-0 w-full h-0.5 bg-primary transform origin-left transition-transform duration-300 ${location === link.href ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                    }`} />
+                </div>
+              </Link>
+            ))}
+          </nav>
+
+          {/* Actions */}
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="sm" className="hidden md:flex gap-2 text-muted-foreground hover:text-primary">
+              <MapPin className="h-4 w-4" />
+              <span className="text-xs">Delivering to SFV</span>
+            </Button>
+            <Button size="icon" variant="outline" className="relative border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 group">
+              <ShoppingBag className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center shadow-sm">
+                0
+              </span>
+            </Button>
+          </div>
         </div>
       </header>
 
