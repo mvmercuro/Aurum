@@ -40,7 +40,7 @@ export default function HomePage() {
             </div>
             <h3 className="text-xl font-bold mb-3 font-serif">Community First</h3>
             <p className="text-muted-foreground leading-relaxed">
-              Born and raised in the Valley. We're dedicated to serving our neighbors with respect and care.
+              Born and raised in the Valley. We&apos;re dedicated to serving our neighbors with respect and care.
             </p>
           </div>
         </div>
