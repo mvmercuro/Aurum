@@ -54,8 +54,8 @@ export async function POST(request: NextRequest) {
       zip: zipRecord.zip,
       regionId: region.id,
       regionName: region.name,
-      deliveryFeeCents: region.deliveryFeeCents,
-      minimumOrderCents: region.minimumOrderCents,
+      deliveryFeeCents: region.deliveryFeeCents || 0,
+      minimumOrderCents: region.minimumOrderCents || 0,
     });
   } catch (error) {
     console.error('ZIP check error:', error);

@@ -87,15 +87,15 @@ export async function POST(request: NextRequest) {
 
     if (subtotalCents < region.minimumOrderCents) {
       return NextResponse.json(
-        { 
+        {
           error: 'Order does not meet minimum',
-          minimumOrderCents: region.minimumOrderCents 
+          minimumOrderCents: region.minimumOrderCents
         },
         { status: 400 }
       );
     }
 
-    const deliveryFeeCents = subtotalCents >= 5000 ? 0 : region.deliveryFeeCents;
+    const deliveryFeeCents = subtotalCents >= 5000 ? 0 : (region.deliveryFeeCents || 0);
     const totalCents = subtotalCents + deliveryFeeCents;
 
     const orderNumber = 'ORD-' + Date.now().toString().slice(-8);

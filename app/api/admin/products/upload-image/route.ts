@@ -24,6 +24,22 @@ export async function POST(request: NextRequest) {
 
         // specific bucket name? 'products'?
         const bucket = 'products';
+
+        // Ensure bucket exists
+        const { data: bucketData, error: bucketError } = await supabaseAdmin.storage.getBucket(bucket);
+        if (bucketError) {
+            // If getBucket fails, try creating it (assuming it doesn't exist or we have permissions)
+            // Note: getBucket might return error if it doesn't exist.
+            const { error: createError } = await supabaseAdmin.storage.createBucket(bucket, {
+                public: true,
+                fileSizeLimit: 10485760, // 10MB
+                allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp']
+            });
+            if (createError) {
+                console.warn('Failed to create bucket (might already exist or permission issue):', createError);
+            }
+        }
+
         const fileExt = file.name.split('.').pop();
         const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
         const filePath = `${fileName}`;
@@ -34,7 +50,7 @@ export async function POST(request: NextRequest) {
 
         if (error) {
             console.error('Supabase storage upload error:', error);
-            return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+            return NextResponse.json({ error: 'Upload failed: ' + error.message }, { status: 500 });
         }
 
         const { data: { publicUrl } } = supabaseAdmin.storage

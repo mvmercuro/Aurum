@@ -139,7 +139,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
-    const deliveryFee = regionInfo?.deliveryFeeCents || 0;
+    const deliveryFee = regionInfo?.deliveryFeeCents ?? 0;
     return subtotal + deliveryFee;
   };
 
@@ -351,7 +351,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
                   {regionInfo && (
                     <div className="flex justify-between text-sm">
                       <span>Delivery Fee:</span>
-                      <span>${(regionInfo.deliveryFeeCents / 100).toFixed(2)}</span>
+                      <span>${((regionInfo.deliveryFeeCents || 0) / 100).toFixed(2)}</span>
                     </div>
                   )}
                   <div className="flex justify-between font-bold">
