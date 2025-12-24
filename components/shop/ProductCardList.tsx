@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Star, Heart } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { Product } from "@/lib/api";
 
 export interface ProductWithCategory extends Product {
@@ -21,10 +22,12 @@ export function ProductCardList({ product }: { product: ProductWithCategory }) {
             <div className="flex bg-card rounded-lg border border-border/40 hover:border-primary/50 transition-all duration-300 overflow-hidden h-40 w-full hover:shadow-md">
                 {/* Left: Image Section */}
                 <div className="relative w-40 h-40 flex-shrink-0 bg-secondary/10">
-                    <img
+                    <Image
                         src={imageUrl}
                         alt={product.name}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                        sizes="160px"
                     />
                     {/* Favorite Heart (Weedmaps style) */}
                     <button

@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, Star } from "lucide-react";
+import Image from "next/image";
 
 interface ProductPageProps {
   params: Promise<{ id: string }>;
@@ -11,7 +12,7 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
-  
+
   let product;
   try {
     product = await productsApi.getById(parseInt(id));
@@ -27,10 +28,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 gap-12">
           <div className="aspect-square overflow-hidden rounded-lg border border-border">
-            <img
+            <Image
               src={imageUrl}
               alt={product.name}
-              className="w-full h-full object-cover"
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>
 

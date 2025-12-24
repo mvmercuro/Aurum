@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -200,7 +201,13 @@ export function ProductFormDialog({
             <div className="flex items-center gap-4">
               {imagePreview && (
                 <div className="relative w-32 h-32 rounded-lg overflow-hidden bg-secondary/20">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                  <Image
+                    src={imagePreview}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    sizes="128px"
+                  />
                   <button
                     type="button"
                     onClick={() => {
