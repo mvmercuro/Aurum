@@ -27,7 +27,7 @@ export function Hero() {
                             />
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-serif text-foreground drop-shadow-lg">
-                            <span className="block text-primary">SFV Premium</span>
+                            <span className="block text-primary">Aurum</span>
                             <span className="block">Cannabis Concierge</span>
                         </h1>
                         <p className="text-xl md:text-2xl text-muted-foreground/90 max-w-lg leading-relaxed font-light">
