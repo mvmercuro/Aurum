@@ -1,4 +1,5 @@
 import Link from "next/link";
+import NextImage from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin } from "lucide-react";
 
@@ -20,10 +21,13 @@ export function Hero() {
                     <div className="space-y-4">
                         <div className="w-32 h-32 relative mb-6">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
+                            <NextImage
                                 src="/logo.png"
                                 alt="Aurum Logo"
-                                className="w-full h-full object-contain drop-shadow-2xl animate-in fade-in zoom-in duration-1000"
+                                fill
+                                priority
+                                className="object-contain drop-shadow-2xl animate-in fade-in zoom-in duration-1000"
+                                sizes="(max-width: 768px) 128px, 128px"
                             />
                         </div>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-serif text-foreground drop-shadow-lg">

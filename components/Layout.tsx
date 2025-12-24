@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ShoppingBag, Menu, X, MapPin, Phone } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -122,7 +123,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
             <div className="space-y-4">
               <h3 className="font-serif text-xl font-bold flex items-center gap-2">
-                <img src="/logo.png" alt="Logo" className="h-6 w-6 object-contain" />
+                <Image src="/logo.png" alt="Logo" width={24} height={24} className="object-contain" />
                 Aurum
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
