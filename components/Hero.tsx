@@ -18,6 +18,14 @@ export function Hero() {
             <div className="container relative z-10 flex h-full items-center">
                 <div className="max-w-2xl space-y-8 animate-in fade-in slide-in-from-left-8 duration-700">
                     <div className="space-y-4">
+                        <div className="w-32 h-32 relative mb-6">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img
+                                src="/logo.png"
+                                alt="Aurum Logo"
+                                className="w-full h-full object-contain drop-shadow-2xl animate-in fade-in zoom-in duration-1000"
+                            />
+                        </div>
                         <h1 className="text-5xl md:text-7xl font-bold tracking-tight font-serif text-foreground drop-shadow-lg">
                             <span className="block text-primary">SFV Premium</span>
                             <span className="block">Cannabis Concierge</span>
