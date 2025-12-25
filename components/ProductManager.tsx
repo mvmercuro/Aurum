@@ -155,7 +155,7 @@ export function ProductManager() {
                   className="flex items-center gap-4 p-4 border rounded-lg bg-card"
                 >
                   {/* Product Image */}
-                  <div className="w-20 h-20 rounded-lg overflow-hidden bg-secondary/20 flex-shrink-0">
+                  <div className="w-20 h-20 rounded-lg overflow-hidden bg-secondary/20 flex-shrink-0 relative">
                     {product.imageUrl ? (
                       <Image
                         src={product.imageUrl}

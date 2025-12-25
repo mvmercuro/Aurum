@@ -27,7 +27,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     <Layout>
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-2 gap-12">
-          <div className="aspect-square overflow-hidden rounded-lg border border-border">
+          <div className="aspect-square overflow-hidden rounded-lg border border-border relative">
             <Image
               src={imageUrl}
               alt={product.name}
