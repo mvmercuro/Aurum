@@ -1,5 +1,6 @@
 import Link from "next/link";
 import NextImage from "next/image";
+import { Component as EtherealShadow } from "@/components/etheral-shadow";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, MapPin } from "lucide-react";
 
@@ -12,6 +13,14 @@ export function Hero() {
                 style={{ backgroundImage: 'url(/images/hero-bg.jpg)' }}
             >
                 <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
+                <div className="absolute inset-0 opacity-40 mix-blend-soft-light">
+                    <EtherealShadow
+                        sizing="fill"
+                        color="#00CDBC"
+                        animation={{ scale: 30, speed: 20 }}
+                        noise={{ opacity: 0.2, scale: 1 }}
+                    />
+                </div>
                 <div className="absolute inset-0 bg-black/20" />
             </div>
 
