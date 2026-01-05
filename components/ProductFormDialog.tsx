@@ -125,6 +125,13 @@ export function ProductFormDialog({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate category is selected
+    if (!formData.categoryId) {
+      toast.error("Please select a category");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -175,13 +182,17 @@ export function ProductFormDialog({
         body: JSON.stringify(productData),
       });
 
-      if (!response.ok) throw new Error("Failed to save product");
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ error: "Unknown error" }));
+        throw new Error(errorData.error || "Failed to save product");
+      }
 
       toast.success(product ? "Product updated successfully" : "Product created successfully");
       onSaved();
+      onOpenChange(false);
     } catch (error) {
       console.error("Failed to save product:", error);
-      toast.error("Failed to save product");
+      toast.error(error instanceof Error ? error.message : "Failed to save product");
     } finally {
       setLoading(false);
     }
