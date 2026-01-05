@@ -86,7 +86,7 @@ export function ProductFormDialog({
         strainType: product.strainType || "",
         brand: product.brand || "",
         weight: product.weight || "3.5g",
-        effects: product.effects || "",
+        effects: Array.isArray(product.effects) ? product.effects.join(", ") : (product.effects || ""),
         isActive: product.isActive,
       });
       setImagePreview(product.imageUrl);
@@ -166,7 +166,9 @@ export function ProductFormDialog({
         strainType: formData.strainType || null,
         brand: formData.brand || null,
         weight: formData.weight || null,
-        effects: formData.effects ? formData.effects.split(',').map(e => e.trim()).filter(Boolean) : [],
+        effects: Array.isArray(formData.effects)
+          ? formData.effects
+          : (formData.effects ? formData.effects.split(',').map(e => e.trim()).filter(Boolean) : []),
         isActive: formData.isActive,
       };
 
