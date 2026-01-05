@@ -146,15 +146,14 @@ export function ProductFormDialog({
         imageUrl = uploadData.url;
       }
 
-      // Prepare product data
-      // Prepare product data
+      // Prepare product data with explicit type conversions
       const productData = {
         name: formData.name,
         description: formData.description || null,
         priceCents: Math.round(Number(formData.priceCents)),
         imageUrl,
-        categoryId: parseInt(formData.categoryId),
-        inventoryCount: Number(formData.inventoryCount),
+        categoryId: Number(formData.categoryId),
+        inventoryCount: Math.round(Number(formData.inventoryCount)),
         thcPercentage: formData.thcPercentage || null,
         cbdPercentage: formData.cbdPercentage || null,
         strainType: formData.strainType || null,
