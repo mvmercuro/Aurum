@@ -58,14 +58,42 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json();
 
-        // Basic validation could go here
+        // Strict validation and mapping
+        if (!body.name || !body.priceCents || !body.categoryId) {
+            return NextResponse.json(
+                { error: 'Missing required fields' },
+                { status: 400 }
+            );
+        }
 
-        const result = await db.insert(products).values({
-            ...body,
-            effects: JSON.stringify(body.effects || []),
+        // Handle effects: ensure it's stored as a JSON string of an array
+        let effectsArray: string[] = [];
+        if (Array.isArray(body.effects)) {
+            effectsArray = body.effects;
+        } else if (typeof body.effects === 'string') {
+            // Split comma-separated string if provided as string
+            effectsArray = body.effects.split(',').map((e: string) => e.trim()).filter((e: string) => e.length > 0);
+        }
+
+        const productValues = {
+            name: body.name,
+            description: body.description || null,
+            priceCents: Math.round(Number(body.priceCents)), // Ensure integer
+            imageUrl: body.imageUrl || null,
+            categoryId: Number(body.categoryId),
+            inventoryCount: Math.round(Number(body.inventoryCount) || 0),
+            isActive: body.isActive ?? true,
+            thcPercentage: body.thcPercentage ? String(body.thcPercentage) : null,
+            cbdPercentage: body.cbdPercentage ? String(body.cbdPercentage) : null,
+            strainType: body.strainType || null,
+            brand: body.brand || null,
+            weight: body.weight || null,
+            effects: JSON.stringify(effectsArray),
             createdAt: new Date(),
             updatedAt: new Date(),
-        }).returning();
+        };
+
+        const result = await db.insert(products).values(productValues).returning();
 
         return NextResponse.json(result[0]);
     } catch (error) {

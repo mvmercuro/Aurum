@@ -27,13 +27,32 @@ export async function PATCH(
         }
 
         // Handle effects array serialization if present
-        const updateData = {
-            ...body,
+        // Handle effects array serialization if present
+        const updateData: any = {
             updatedAt: new Date(),
         };
 
-        if (body.effects) {
-            updateData.effects = JSON.stringify(body.effects);
+        if (body.name !== undefined) updateData.name = body.name;
+        if (body.description !== undefined) updateData.description = body.description;
+        if (body.priceCents !== undefined) updateData.priceCents = Math.round(Number(body.priceCents));
+        if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl;
+        if (body.categoryId !== undefined) updateData.categoryId = Number(body.categoryId);
+        if (body.inventoryCount !== undefined) updateData.inventoryCount = Math.round(Number(body.inventoryCount));
+        if (body.isActive !== undefined) updateData.isActive = body.isActive;
+        if (body.thcPercentage !== undefined) updateData.thcPercentage = String(body.thcPercentage);
+        if (body.cbdPercentage !== undefined) updateData.cbdPercentage = String(body.cbdPercentage);
+        if (body.strainType !== undefined) updateData.strainType = body.strainType;
+        if (body.brand !== undefined) updateData.brand = body.brand;
+        if (body.weight !== undefined) updateData.weight = body.weight;
+
+        if (body.effects !== undefined) {
+            let effectsArray: string[] = [];
+            if (Array.isArray(body.effects)) {
+                effectsArray = body.effects;
+            } else if (typeof body.effects === 'string') {
+                effectsArray = body.effects.split(',').map((e: string) => e.trim()).filter((e: string) => e.length > 0);
+            }
+            updateData.effects = JSON.stringify(effectsArray);
         }
 
         const result = await db

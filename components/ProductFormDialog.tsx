@@ -147,19 +147,20 @@ export function ProductFormDialog({
       }
 
       // Prepare product data
+      // Prepare product data
       const productData = {
         name: formData.name,
         description: formData.description || null,
-        priceCents: Math.round(formData.priceCents),
+        priceCents: Math.round(Number(formData.priceCents)),
         imageUrl,
         categoryId: parseInt(formData.categoryId),
-        inventoryCount: formData.inventoryCount,
+        inventoryCount: Number(formData.inventoryCount),
         thcPercentage: formData.thcPercentage || null,
         cbdPercentage: formData.cbdPercentage || null,
         strainType: formData.strainType || null,
         brand: formData.brand || null,
         weight: formData.weight || null,
-        effects: formData.effects || null,
+        effects: formData.effects ? formData.effects.split(',').map(e => e.trim()).filter(Boolean) : [],
         isActive: formData.isActive,
       };
 
