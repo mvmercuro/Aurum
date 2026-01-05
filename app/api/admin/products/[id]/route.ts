@@ -39,8 +39,8 @@ export async function PATCH(
         if (body.categoryId !== undefined) updateData.categoryId = Number(body.categoryId);
         if (body.inventoryCount !== undefined) updateData.inventoryCount = Math.round(Number(body.inventoryCount));
         if (body.isActive !== undefined) updateData.isActive = body.isActive;
-        if (body.thcPercentage !== undefined) updateData.thcPercentage = String(body.thcPercentage);
-        if (body.cbdPercentage !== undefined) updateData.cbdPercentage = String(body.cbdPercentage);
+        if (body.thcPercentage !== undefined) updateData.thcPercentage = body.thcPercentage ? String(body.thcPercentage) : null;
+        if (body.cbdPercentage !== undefined) updateData.cbdPercentage = body.cbdPercentage ? String(body.cbdPercentage) : null;
         if (body.strainType !== undefined) updateData.strainType = body.strainType;
         if (body.brand !== undefined) updateData.brand = body.brand;
         if (body.weight !== undefined) updateData.weight = body.weight;
