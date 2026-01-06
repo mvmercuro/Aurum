@@ -6,6 +6,7 @@ import { useState } from 'react';
 import SuperJSON from 'superjson';
 import { trpc } from '@/lib/trpc';
 import { ThemeProvider } from "next-themes";
+import { CartProvider } from '@/contexts/CartContext';
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
@@ -34,9 +35,12 @@ export function Providers({ children }: { children: React.ReactNode }) {
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          {children}
+          <CartProvider>
+            {children}
+          </CartProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </trpc.Provider>
   );
 }
+

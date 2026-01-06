@@ -7,6 +7,7 @@ import { Star, Heart } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product } from "@/lib/api";
+import { useCart } from "@/contexts/CartContext";
 
 export interface ProductWithCategory extends Product {
     category?: { name: string } | null;
@@ -16,6 +17,22 @@ export function ProductCardList({ product }: { product: ProductWithCategory }) {
     const price = (product.priceCents / 100).toFixed(2);
     // Default image if missing
     const imageUrl = product.imageUrl || "/images/flower-category.jpg";
+
+    const { addItem } = useCart();
+    const [isAdded, setIsAdded] = useState(false);
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        // Create a standard Product object from what we have
+        const productToAdd: Product = {
+            ...product,
+            // Ensure compatibility if types drift, though ProductWithCategory extends Product
+        };
+
+        addItem(productToAdd);
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
+    };
 
     return (
         <Link href={`/product/${product.id}`} className="block group">
@@ -106,16 +123,18 @@ export function ProductCardList({ product }: { product: ProductWithCategory }) {
                     </div>
 
                     <Button
-                        onClick={(e) => {
-                            e.preventDefault();
-                            // Add to cart logic
-                        }}
-                        className="rounded-full bg-[#00CDBC] hover:bg-[#00b2a3] text-white font-semibold text-sm h-8 px-6 w-full shadow-sm hover:shadow-md transition-all"
+                        onClick={handleAddToCart}
+                        disabled={product.inventoryCount === 0}
+                        className={`rounded-full font-semibold text-sm h-8 px-6 w-full shadow-sm hover:shadow-md transition-all ${isAdded
+                            ? "bg-green-600 hover:bg-green-700 text-white"
+                            : "bg-[#00CDBC] hover:bg-[#00b2a3] text-white"
+                            }`}
                     >
-                        Add
+                        {isAdded ? "Added" : "Add"}
                     </Button>
                 </div>
             </div>
         </Link>
     );
 }
+

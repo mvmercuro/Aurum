@@ -46,3 +46,6 @@ vite.config.ts
 
 .vercel
 .env*.local
+
+.vercel
+.env*.local

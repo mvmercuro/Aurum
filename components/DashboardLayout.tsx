@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/sidebar";
 import { createClient } from "@/lib/supabase/client";
 import { useIsMobile } from "@/hooks/useMobile";
-import { LayoutDashboard, LogOut, PanelLeft, Users, ShoppingBag, Package } from "lucide-react";
+import { LayoutDashboard, LogOut, PanelLeft, Users, ShoppingBag, Package, MapPin } from "lucide-react";
 import { CSSProperties, useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
@@ -33,6 +33,8 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin" },
   { icon: ShoppingBag, label: "Orders", path: "/admin/orders" },
   { icon: Package, label: "Products", path: "/admin/products" },
+  { icon: Users, label: "Customers", path: "/admin/customers" },
+  { icon: MapPin, label: "Delivery Zones", path: "/admin/delivery-zones" },
 ];
 
 const SIDEBAR_WIDTH_KEY = "sidebar-width";

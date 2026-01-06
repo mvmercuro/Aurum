@@ -22,6 +22,7 @@ interface Product {
   name: string;
   description: string | null;
   priceCents: number;
+  costCents?: number | null;
   imageUrl: string | null;
   categoryId: number;
   inventoryCount: number;
@@ -62,6 +63,7 @@ export function ProductFormDialog({
     name: "",
     description: "",
     priceCents: 0,
+    costCents: 0,
     categoryId: "",
     inventoryCount: 0,
     thcPercentage: "",
@@ -79,6 +81,7 @@ export function ProductFormDialog({
         name: product.name,
         description: product.description || "",
         priceCents: product.priceCents,
+        costCents: product.costCents || 0,
         categoryId: product.categoryId.toString(),
         inventoryCount: product.inventoryCount,
         thcPercentage: product.thcPercentage || "",
@@ -96,6 +99,7 @@ export function ProductFormDialog({
         name: "",
         description: "",
         priceCents: 0,
+        costCents: 0,
         categoryId: categories[0]?.id.toString() || "",
         inventoryCount: 0,
         thcPercentage: "",
@@ -158,6 +162,7 @@ export function ProductFormDialog({
         name: formData.name,
         description: formData.description || null,
         priceCents: Math.round(Number(formData.priceCents)),
+        costCents: Math.round(Number(formData.costCents)) || null,
         imageUrl,
         categoryId: Number(formData.categoryId),
         inventoryCount: Math.round(Number(formData.inventoryCount)),
@@ -284,6 +289,19 @@ export function ProductFormDialog({
                   setFormData({ ...formData, priceCents: Math.round(parseFloat(e.target.value) * 100) })
                 }
                 required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="cost">Cost ($) - Internal Only</Label>
+              <Input
+                id="cost"
+                type="number"
+                step="0.01"
+                value={(formData.costCents / 100).toFixed(2)}
+                onChange={(e) =>
+                  setFormData({ ...formData, costCents: Math.round(parseFloat(e.target.value) * 100) })
+                }
               />
             </div>
 

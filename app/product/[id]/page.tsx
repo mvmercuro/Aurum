@@ -1,9 +1,10 @@
 import { Layout } from "@/components/Layout";
-import { productsApi } from "@/lib/api";
+import { getDb } from "@/lib/db";
+import { products } from "@/drizzle/schema";
+import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ShoppingBag, Star } from "lucide-react";
+import { AddToCartButton } from "@/components/product/AddToCartButton";
 import Image from "next/image";
 
 interface ProductPageProps {
@@ -12,13 +13,41 @@ interface ProductPageProps {
 
 export default async function ProductPage({ params }: ProductPageProps) {
   const { id } = await params;
+  const productId = parseInt(id);
 
-  let product;
-  try {
-    product = await productsApi.getById(parseInt(id));
-  } catch (error) {
+  if (isNaN(productId)) {
     notFound();
   }
+
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  const [row] = await db
+    .select()
+    .from(products)
+    .where(eq(products.id, productId))
+    .limit(1);
+
+  if (!row) {
+    notFound();
+  }
+
+  // Parse effects JSON
+  let effects: string[] = [];
+  if (row.effects) {
+    try {
+      effects = JSON.parse(row.effects);
+    } catch (e) {
+      effects = [];
+    }
+  }
+
+  const product = {
+    ...row,
+    effects,
+  };
 
   const price = (product.priceCents / 100).toFixed(2);
   const imageUrl = product.imageUrl || "/images/flower-category.jpg";
@@ -96,14 +125,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
               </div>
             )}
 
-            <Button
-              size="lg"
-              className="w-full"
-              disabled={product.inventoryCount === 0}
-            >
-              <ShoppingBag className="h-5 w-5 mr-2" />
-              {product.inventoryCount === 0 ? "Out of Stock" : "Add to Cart"}
-            </Button>
+            <AddToCartButton product={product} large />
           </div>
         </div>
       </div>

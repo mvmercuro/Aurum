@@ -35,6 +35,7 @@ export async function PATCH(
         if (body.name !== undefined) updateData.name = body.name;
         if (body.description !== undefined) updateData.description = body.description;
         if (body.priceCents !== undefined) updateData.priceCents = Math.round(Number(body.priceCents));
+        if (body.costCents !== undefined) updateData.costCents = body.costCents ? Math.round(Number(body.costCents)) : null;
         if (body.imageUrl !== undefined) updateData.imageUrl = body.imageUrl;
         if (body.categoryId !== undefined) updateData.categoryId = Number(body.categoryId);
         if (body.inventoryCount !== undefined) updateData.inventoryCount = Math.round(Number(body.inventoryCount));

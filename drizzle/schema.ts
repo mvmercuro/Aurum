@@ -82,6 +82,7 @@ export const products = pgTable("products", {
   name: varchar("name", { length: 255 }).notNull(),
   description: text("description"),
   priceCents: integer("priceCents").notNull(),
+  costCents: integer("costCents"), // Internal cost for profit calculation
   imageUrl: varchar("imageUrl", { length: 500 }),
   categoryId: integer("categoryId").notNull(),
   isActive: boolean("isActive").notNull().default(true),
@@ -118,12 +119,16 @@ export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   orderNumber: varchar("orderNumber", { length: 20 }).notNull().unique(),
   status: orderStatusEnum("status").notNull().default("new"),
+  isApproved: boolean("isApproved").notNull().default(false),
+  approvedBy: integer("approvedBy"), // User ID of admin who approved
+  approvedAt: timestamp("approvedAt"),
   regionId: integer("regionId").notNull(),
+  customerId: integer("customerId"), // Optional link to customers table
   subtotalCents: integer("subtotalCents").notNull(),
   deliveryFeeCents: integer("deliveryFeeCents").notNull(),
   totalCents: integer("totalCents").notNull(),
   paymentMethod: paymentMethodEnum("paymentMethod").notNull(),
-  // Customer info
+  // Customer info (denormalized for flexibility)
   customerName: varchar("customerName", { length: 255 }).notNull(),
   customerPhone: varchar("customerPhone", { length: 20 }).notNull(),
   customerEmail: varchar("customerEmail", { length: 320 }),
@@ -150,6 +155,7 @@ export const orderItems = pgTable("orderItems", {
   productId: integer("productId").notNull(),
   quantity: integer("quantity").notNull(),
   priceCentsAtPurchase: integer("priceCentsAtPurchase").notNull(),
+  costCentsAtPurchase: integer("costCentsAtPurchase"), // Cost at time of purchase for profit calculation
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -183,3 +189,63 @@ export const orderAssignments = pgTable("orderAssignments", {
 
 export type OrderAssignment = typeof orderAssignments.$inferSelect;
 export type InsertOrderAssignment = typeof orderAssignments.$inferInsert;
+
+/**
+ * Customers
+ */
+export const customers = pgTable("customers", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 20 }).notNull().unique(),
+  email: varchar("email", { length: 320 }),
+  address1: varchar("address1", { length: 255 }),
+  address2: varchar("address2", { length: 255 }),
+  city: varchar("city", { length: 100 }),
+  state: varchar("state", { length: 2 }).notNull().default("CA"),
+  zip: varchar("zip", { length: 10 }),
+  notes: text("notes"),
+  totalOrders: integer("totalOrders").notNull().default(0),
+  lifetimeValueCents: integer("lifetimeValueCents").notNull().default(0),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().notNull(),
+});
+
+export type Customer = typeof customers.$inferSelect;
+export type InsertCustomer = typeof customers.$inferInsert;
+
+/**
+ * Rewards program tiers
+ */
+export const rewardsTierEnum = pgEnum("rewardsTier", ["bronze", "silver", "gold", "platinum"]);
+
+/**
+ * Rewards members
+ */
+export const rewardsMembers = pgTable("rewardsMembers", {
+  id: serial("id").primaryKey(),
+  customerId: integer("customerId").notNull().unique(), // Links to customers table
+  tier: rewardsTierEnum("tier").notNull().default("bronze"),
+  pointsBalance: integer("pointsBalance").notNull().default(0),
+  lifetimePoints: integer("lifetimePoints").notNull().default(0),
+  isActive: boolean("isActive").notNull().default(true),
+  joinedAt: timestamp("joinedAt").defaultNow().notNull(),
+  lastActivityAt: timestamp("lastActivityAt").defaultNow().notNull(),
+});
+
+export type RewardsMember = typeof rewardsMembers.$inferSelect;
+export type InsertRewardsMember = typeof rewardsMembers.$inferInsert;
+
+/**
+ * Rewards transactions (points earned/redeemed)
+ */
+export const rewardsTransactions = pgTable("rewardsTransactions", {
+  id: serial("id").primaryKey(),
+  memberId: integer("memberId").notNull(),
+  orderId: integer("orderId"), // Optional: link to order that triggered points
+  points: integer("points").notNull(), // Positive for earned, negative for redeemed
+  description: text("description").notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type RewardsTransaction = typeof rewardsTransactions.$inferSelect;
+export type InsertRewardsTransaction = typeof rewardsTransactions.$inferInsert;

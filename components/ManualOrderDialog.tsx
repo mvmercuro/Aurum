@@ -19,14 +19,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Plus, X } from "lucide-react";
+import { Plus, X, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+import { Combobox, type ComboboxOption } from "@/components/ui/combobox";
 
 interface Product {
   id: number;
   name: string;
   priceCents: number;
-  category: string;
+  category?: string;
+}
+
+interface Customer {
+  id: number;
+  name: string;
+  phone: string;
+  email?: string | null;
+  address1?: string | null;
+  address2?: string | null;
+  city?: string | null;
+  zip?: string | null;
 }
 
 interface OrderItem {
@@ -39,7 +51,12 @@ interface OrderItem {
 export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => void }) {
   const [open, setOpen] = useState(false);
   const [products, setProducts] = useState<Product[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [items, setItems] = useState<OrderItem[]>([]);
+
+  const [selectedCustomerId, setSelectedCustomerId] = useState<string>("");
+  const [selectedProductId, setSelectedProductId] = useState<string>("");
+
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [address1, setAddress1] = useState("");
@@ -54,6 +71,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
   useEffect(() => {
     if (open) {
       fetchProducts();
+      fetchCustomers();
     }
   }, [open]);
 
@@ -65,6 +83,40 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
     } catch (error) {
       console.error("Failed to fetch products:", error);
       toast.error("Failed to load products");
+    }
+  };
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await fetch("/api/admin/customers");
+      const data = await response.json();
+      setCustomers(data);
+    } catch (error) {
+      console.error("Failed to fetch customers:", error);
+      toast.error("Failed to load customers");
+    }
+  };
+
+  const handleCustomerSelect = (customerId: string) => {
+    setSelectedCustomerId(customerId);
+
+    if (!customerId) {
+      // Clear customer info if deselected
+      return;
+    }
+
+    const customer = customers.find((c) => c.id.toString() === customerId);
+    if (customer) {
+      setCustomerName(customer.name);
+      setCustomerPhone(customer.phone);
+      setAddress1(customer.address1 || "");
+      setAddress2(customer.address2 || "");
+      setCity(customer.city || "");
+      setZip(customer.zip || "");
+
+      if (customer.zip) {
+        checkZip(customer.zip);
+      }
     }
   };
 
@@ -98,6 +150,8 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
   };
 
   const addItem = (productId: string) => {
+    if (!productId) return;
+
     const product = products.find((p) => p.id === parseInt(productId));
     if (!product) return;
 
@@ -119,6 +173,9 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
         },
       ]);
     }
+
+    // Reset product selection
+    setSelectedProductId("");
   };
 
   const removeItem = (productId: number) => {
@@ -139,7 +196,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
 
   const calculateTotal = () => {
     const subtotal = calculateSubtotal();
-    const deliveryFee = regionInfo?.deliveryFeeCents ?? 0;
+    const deliveryFee = subtotal >= 10000 ? 0 : (regionInfo?.deliveryFeeCents ?? 0);
     return subtotal + deliveryFee;
   };
 
@@ -147,9 +204,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
     e.preventDefault();
 
     if (items.length === 0) {
-      toast.error("Please add at least one product to the order", {
-        description: "Select a product from the dropdown and click 'Add'."
-      });
+      toast.error("Please add at least one product to the order");
       return;
     }
 
@@ -157,7 +212,6 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
       toast.error("Valid Delivery ZIP Code Required", {
         description: "Please enter a 5-digit ZIP code inside our service area."
       });
-      // Try validating again to show specific error
       if (zip.length === 5) checkZip(zip);
       return;
     }
@@ -169,6 +223,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          customerId: selectedCustomerId ? parseInt(selectedCustomerId) : undefined,
           customerName,
           customerPhone,
           address1,
@@ -201,6 +256,8 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
 
   const resetForm = () => {
     setItems([]);
+    setSelectedCustomerId("");
+    setSelectedProductId("");
     setCustomerName("");
     setCustomerPhone("");
     setAddress1("");
@@ -211,6 +268,20 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
     setPaymentMethod("cash");
     setRegionInfo(null);
   };
+
+  // Convert products to combobox options
+  const productOptions: ComboboxOption[] = products.map((product) => ({
+    value: product.id.toString(),
+    label: product.name,
+    metadata: `$${(product.priceCents / 100).toFixed(2)}${product.category ? ` • ${product.category}` : ""}`,
+  }));
+
+  // Convert customers to combobox options
+  const customerOptions: ComboboxOption[] = customers.map((customer) => ({
+    value: customer.id.toString(),
+    label: customer.name,
+    metadata: customer.phone,
+  }));
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -225,6 +296,39 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
           <DialogTitle>Create Manual Order (Phone Order)</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Customer Selection */}
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">Customer</h3>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => window.open("/admin/customers", "_blank")}
+                className="gap-1"
+              >
+                <UserPlus className="h-3 w-3" />
+                New Customer
+              </Button>
+            </div>
+            <div>
+              <Label>Select Existing Customer (Optional)</Label>
+              <Combobox
+                options={customerOptions}
+                value={selectedCustomerId}
+                onValueChange={handleCustomerSelect}
+                placeholder="Search customers..."
+                searchPlaceholder="Type to search by name or phone..."
+                emptyMessage="No customers found"
+              />
+              {selectedCustomerId && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Customer selected - info auto-filled below
+                </p>
+              )}
+            </div>
+          </div>
+
           {/* Customer Info */}
           <div className="space-y-4">
             <h3 className="font-semibold">Customer Information</h3>
@@ -291,6 +395,7 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
                 {regionInfo && (
                   <p className="text-xs text-green-500 mt-1">
                     ✓ {regionInfo.regionName} - ${(regionInfo.deliveryFeeCents / 100).toFixed(2)} delivery
+                    {calculateSubtotal() >= 10000 && " (waived for orders $100+)"}
                   </p>
                 )}
               </div>
@@ -301,19 +406,26 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
           <div className="space-y-4">
             <h3 className="font-semibold">Order Items</h3>
             <div>
-              <Label htmlFor="product">Add Product</Label>
-              <Select onValueChange={addItem}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((product) => (
-                    <SelectItem key={product.id} value={product.id.toString()}>
-                      {product.name} - ${(product.priceCents / 100).toFixed(2)} ({product.category})
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Label>Add Product</Label>
+              <div className="flex gap-2">
+                <div className="flex-1">
+                  <Combobox
+                    options={productOptions}
+                    value={selectedProductId}
+                    onValueChange={setSelectedProductId}
+                    placeholder="Search products..."
+                    searchPlaceholder="Type to search products..."
+                    emptyMessage="No products found"
+                  />
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => addItem(selectedProductId)}
+                  disabled={!selectedProductId}
+                >
+                  Add
+                </Button>
+              </div>
             </div>
 
             {items.length > 0 && (
@@ -351,7 +463,13 @@ export function ManualOrderDialog({ onOrderCreated }: { onOrderCreated: () => vo
                   {regionInfo && (
                     <div className="flex justify-between text-sm">
                       <span>Delivery Fee:</span>
-                      <span>${((regionInfo.deliveryFeeCents || 0) / 100).toFixed(2)}</span>
+                      <span>
+                        {calculateSubtotal() >= 10000 ? (
+                          <span className="text-green-600">FREE (over $100)</span>
+                        ) : (
+                          `$${((regionInfo.deliveryFeeCents || 0) / 100).toFixed(2)}`
+                        )}
+                      </span>
                     </div>
                   )}
                   <div className="flex justify-between font-bold">

@@ -8,10 +8,13 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { AgeGate } from "./AgeGate";
+import { useCart } from "@/contexts/CartContext";
+import { CartSheet } from "@/components/cart/CartSheet";
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = usePathname();
+  const { itemCount, setIsCartOpen } = useCart();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -104,11 +107,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
               <MapPin className="h-4 w-4" />
               <span className="text-xs">Delivering to SFV</span>
             </Button>
-            <Button size="icon" variant="outline" className="relative border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 group">
+            <Button
+              size="icon"
+              variant="outline"
+              className="relative border-primary/20 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300 group"
+              onClick={() => setIsCartOpen(true)}
+            >
               <ShoppingBag className="h-5 w-5 text-foreground group-hover:text-primary transition-colors" />
-              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center shadow-sm">
-                0
-              </span>
+              {itemCount > 0 && (
+                <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-primary text-[10px] font-bold text-white flex items-center justify-center shadow-sm">
+                  {itemCount}
+                </span>
+              )}
             </Button>
           </div>
         </div>
@@ -173,12 +183,13 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
           <div className="mt-12 pt-8 border-t border-border/50 text-center text-xs text-muted-foreground/60">
             <p className="mb-2">
-              GOVERNMENT WARNING: THIS PACKAGE CONTAINS CANNABIS. KEEP OUT OF REACH OF CHILDREN AND ANIMALS. CANNABIS MAY ONLY BE POSSESSED OR CONSUMED BY PERSONS 21 YEARS OF AGE OR OLDER UNLESS THE PERSON IS A QUALIFIED PATIENT. CANNABIS USE WHILE PREGNANT OR BREASTFEEDING MAY BE HARMFUL. CONSUMPTION OF CANNABIS IMPAIRS YOUR ABILITY TO DRIVE AND OPERATE MACHINERY. PLEASE USE EXTREME CAUTION.
+              GOVERNMENT WARNING: CANNABIS MAY ONLY BE POSSESSED OR CONSUMED BY PERSONS 21 YEARS OF AGE OR OLDER UNLESS THE PERSON IS A QUALIFIED PATIENT. CANNABIS USE WHILE PREGNANT OR BREASTFEEDING MAY BE HARMFUL. CONSUMPTION OF CANNABIS IMPAIRS YOUR ABILITY TO DRIVE AND OPERATE MACHINERY. PLEASE USE EXTREME CAUTION.
             </p>
             <p>© 2025 SFV Premium Cannabis Delivery. All rights reserved.</p>
           </div>
         </div>
       </footer>
+      <CartSheet />
     </div>
   );
 }

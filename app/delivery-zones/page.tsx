@@ -26,7 +26,7 @@ export default function DeliveryZonesPage() {
               <Clock className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="font-semibold text-lg mb-2">Fast Delivery</h3>
               <p className="text-sm text-muted-foreground">
-                60-90 minute delivery window for most orders
+                60-90 minute delivery window for most orders in the primary coverage zone
               </p>
             </div>
 
@@ -34,7 +34,7 @@ export default function DeliveryZonesPage() {
               <DollarSign className="h-12 w-12 mx-auto mb-4 text-primary" />
               <h3 className="font-semibold text-lg mb-2">Free Delivery</h3>
               <p className="text-sm text-muted-foreground">
-                On orders over $50 within our delivery zones
+                On orders over $75 within our delivery zones
               </p>
             </div>
           </div>
@@ -45,23 +45,29 @@ export default function DeliveryZonesPage() {
               <div>
                 <h3 className="font-semibold text-lg mb-3 text-primary">Primary Zones</h3>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li>• North Hollywood</li>
-                  <li>• Studio City</li>
-                  <li>• Sherman Oaks</li>
-                  <li>• Van Nuys</li>
-                  <li>• Encino</li>
+                  <li>• Woodland Hills</li>
+                  <li>• Calabasas</li>
+                  <li>• Hidden Hills</li>
+                  <li>• West Hills</li>
+                  <li>• Canoga Park</li>
+                  <li>• Winnetka</li>
                   <li>• Tarzana</li>
+                  <li>• Topanga</li>
+                  <li>• Chatsworth</li>
                 </ul>
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-3 text-primary">Extended Zones</h3>
                 <ul className="space-y-2 text-muted-foreground">
-                  <li>• Woodland Hills</li>
-                  <li>• Reseda</li>
-                  <li>• Canoga Park</li>
-                  <li>• North Hills</li>
-                  <li>• Panorama City</li>
-                  <li>• Granada Hills</li>
+                  <li>• Agoura Hills</li>
+                  <li>• Northridge</li>
+                  <li>• Encino</li>
+                  <li>• Porter Ranch</li>
+                  <li>• Westlake Village</li>
+                  <li>• Sherman Oaks</li>
+                  <li>• Thousand Oaks</li>
+                  <li>• Simi Valley</li>
+                  <li>• Van Nuys</li>
                 </ul>
               </div>
             </div>
