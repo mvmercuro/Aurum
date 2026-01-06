@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { orders } from '@/drizzle/schema';
-import { isAdmin, getUserId } from '@/lib/auth';
+import { isAdmin, getUser } from '@/lib/auth';
 import { eq } from 'drizzle-orm';
 
 export async function POST(
@@ -14,7 +14,8 @@ export async function POST(
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const userId = await getUserId();
+        const user = await getUser();
+        const userId = user?.id || null;
         const { id } = await params;
         const orderId = parseInt(id);
 
