@@ -65,6 +65,13 @@ export function RewardsManager() {
       if (!response.ok) throw new Error("Failed to fetch rewards members");
 
       const data = await response.json();
+
+      // Check if data is an array (not an error object)
+      if (!Array.isArray(data)) {
+        console.error("API returned non-array data:", data);
+        throw new Error(data.error || "Invalid response from server");
+      }
+
       setMembers(data);
 
       // Calculate stats
@@ -87,6 +94,7 @@ export function RewardsManager() {
     } catch (error) {
       console.error("Error fetching members:", error);
       toast.error("Failed to load rewards members");
+      setMembers([]); // Set to empty array on error
     } finally {
       setLoading(false);
     }
